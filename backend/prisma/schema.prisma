@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ATTENDEE
+  ORGANIZER
+  ADMIN
+}
+
+model User {
+  id            String   @id @default(uuid())
+
+  name          String
+  email         String   @unique
+  password      String
+
+  role          Role     @default(ATTENDEE)
+
+  tickets       Ticket[]
+
+  organizedEvents Event[] @relation("EventOrganizer")
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Event {
+  id            String   @id @default(uuid())
+
+  title         String
+  description   String
+  location      String
+
+  date          DateTime
+  capacity      Int
+
+  organizerId   String
+
+  organizer     User @relation(
+    "EventOrganizer",
+    fields: [organizerId],
+    references: [id]
+  )
+
+  tickets       Ticket[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Ticket {
+  id            String   @id @default(uuid())
+
+  userId        String
+  user          User @relation(fields: [userId], references: [id])
+
+  eventId       String
+  event         Event @relation(fields: [eventId], references: [id])
+
+  qrCode        String   @unique
+
+  checkedIn     Boolean  @default(false)
+
+  createdAt     DateTime @default(now())
+
+  @@unique([userId, eventId])
+}
