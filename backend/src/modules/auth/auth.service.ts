@@ -1,6 +1,7 @@
 import { compare, hash } from "bcryptjs";
 import { Role, type User } from "@prisma/client";
-import { type JwtPayload, type SignOptions, sign, verify } from "jsonwebtoken";
+import { type JwtPayload, type SignOptions } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import prisma from "../../config/prisma.js";
 import { logger } from "../../config/logger.js";
 import type { LoginInput, RegisterInput } from "./auth.validation.js";
@@ -62,7 +63,7 @@ function toPublicUser(user: PublicUser): PublicUser {
 }
 
 function createAuthToken(user: PublicUser): string {
-	return sign(
+	return jwt.sign(
 		{
 			email: user.email,
 			name: user.name,
@@ -87,7 +88,7 @@ export function createAuthSession(user: PublicUser) {
 }
 
 export function verifyAuthToken(token: string): AuthTokenPayload & { sub: string } {
-	const decoded = verify(token, JWT_SECRET, {
+	const decoded = jwt.verify(token, JWT_SECRET, {
 		issuer: JWT_ISSUER,
 	});
 

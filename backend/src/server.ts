@@ -3,7 +3,7 @@ import prisma from './config/prisma.js';
 import app from "./app.js";
 import { logger, serializeError } from "./config/logger.js";
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 async function startServer() {
   try {
@@ -11,7 +11,7 @@ async function startServer() {
   
     await prisma.$connect();
 
-    app.listen(PORT, () => {
+    app.listen(PORT, () => {  
       logger.info("HTTP server is ready and accepting requests.", {
         url: `http://localhost:${PORT}`,
       });
