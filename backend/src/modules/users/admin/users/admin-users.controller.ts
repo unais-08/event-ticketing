@@ -10,6 +10,10 @@ import {
 	retrieveUsers as retrieveUsersService,
 } from "./admin-users.service.js";
 
+/**
+ * Centralized error handling for admin user controller actions.
+ * Maps domain errors to appropriate HTTP responses and logs unexpected failures.
+ */
 function handleAdminUserError(res: Response, requestId: string | undefined, error: unknown, action: string): void {
 	if (isAuthError(error)) {
 		logger.warn(`Admin user ${action} failed.`, {
@@ -35,10 +39,17 @@ function handleAdminUserError(res: Response, requestId: string | undefined, erro
 	});
 }
 
+/**
+ * Narrowing helper to detect `AdminUsersError` shape returned by service functions.
+ */
 function isAuthError(error: unknown): error is AdminUsersError {
 	return typeof error === "object" && error !== null && "statusCode" in error && "message" in error;
 }
 
+/**
+ * GET /api/admin/users
+ * Query params: `page`, `limit`, optional `role` to filter.
+ */
 export async function retrieveUsers(req: Request, res: Response): Promise<void> {
 	const page = parsePositiveInteger(req.query.page, 1);
 	const limit = Math.min(parsePositiveInteger(req.query.limit, 20), 100);
@@ -66,6 +77,9 @@ export async function retrieveUsers(req: Request, res: Response): Promise<void> 
 	}
 }
 
+/**
+ * Parse a positive integer from a query value, with a fallback.
+ */
 function parsePositiveInteger(value: unknown, fallback: number): number {
 	if (typeof value !== "string" || value.trim().length === 0) {
 		return fallback;
@@ -76,6 +90,10 @@ function parsePositiveInteger(value: unknown, fallback: number): number {
 	return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
 }
 
+/**
+ * Parse role filter from query string. Returns `undefined` when omitted,
+ * the Role value when valid, or `null` when the provided value is invalid.
+ */
 function parseRoleFilter(value: unknown): Role | undefined | null {
 	if (typeof value !== "string" || value.trim().length === 0) {
 		return undefined;
@@ -86,6 +104,10 @@ function parseRoleFilter(value: unknown): Role | undefined | null {
 	return Object.values(Role).includes(normalized as Role) ? (normalized as Role) : null;
 }
 
+/**
+ * POST /api/admin/users/organizers
+ * Creates an organizer account from the admin panel.
+ */
 export async function createOrganizer(req: Request, res: Response): Promise<void> {
 	const parsedBody = registerSchema.safeParse(req.body);
 
@@ -115,6 +137,10 @@ export async function createOrganizer(req: Request, res: Response): Promise<void
 	}
 }
 
+/**
+ * DELETE /api/admin/users/organizers/:userId
+ * Deletes an organizer and all related resources.
+ */
 export async function removeOrganizer(req: Request, res: Response): Promise<void> {
 	const organizerId = req.params.userId;
 
@@ -138,6 +164,10 @@ export async function removeOrganizer(req: Request, res: Response): Promise<void
 	}
 }
 
+/**
+ * DELETE /api/admin/users/attendees/:userId
+ * Deletes an attendee and their tickets.
+ */
 export async function removeAttendee(req: Request, res: Response): Promise<void> {
 	const attendeeId = req.params.userId;
 

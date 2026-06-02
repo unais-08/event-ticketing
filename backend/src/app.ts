@@ -4,6 +4,7 @@ import { logger, serializeError } from "./config/logger.js";
 import { attachRequestId, httpLogger } from "./middlewares/request-logger.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import adminUsersRoutes from "./modules/users/admin/users/admin-users.routes.js";
+import organizersRoutes from "./modules/organizers/organizers.routes.js";
 const app: Express = express();
 
 app.use(attachRequestId);
@@ -12,6 +13,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/admin/users", adminUsersRoutes);
+app.use("/api/organizers", organizersRoutes);
 
 app.get("/", (_req: Request, res: Response) => {
   res.send({ message: "Express + TypeScript Server is running!" });

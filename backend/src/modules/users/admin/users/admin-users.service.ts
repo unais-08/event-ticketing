@@ -7,14 +7,18 @@ import type { RegisterInput } from "../../../auth/auth.validation.js";
 
 const SALT_ROUNDS = 12;
 
+/**
+ * Error type specific to admin/user management operations.
+ * Includes an HTTP `statusCode` so controllers can map errors to responses.
+ */
 export class AdminUsersError extends Error {
-	readonly statusCode: number;
+  readonly statusCode: number;
 
-	constructor(message: string, statusCode: number) {
-		super(message);
-		this.name = "AdminUsersError";
-		this.statusCode = statusCode;
-	}
+  constructor(message: string, statusCode: number) {
+    super(message);
+    this.name = "AdminUsersError";
+    this.statusCode = statusCode;
+  }
 }
 
 export interface RetrieveUsersQuery {
@@ -44,6 +48,12 @@ export interface RetrieveUsersResult {
 	};
 }
 
+/**
+ * Create a managed user (organizer or attendee) from the admin panel.
+ * - Validates uniqueness of email
+ * - Hashes the provided password
+ * - Returns a fresh auth session for the created user
+ */
 async function createManagedUserAccount(input: RegisterInput, role: Role): Promise<{ user: PublicUser; token: string }> {
 	const existingUser = await prisma.user.findUnique({
 		where: {
@@ -86,6 +96,10 @@ async function createManagedUserAccount(input: RegisterInput, role: Role): Promi
 	return createAuthSession(user);
 }
 
+/**
+ * Retrieve users for the admin listing with optional role filter.
+ * Adds lightweight counts (tickets, organized events) to each user row.
+ */
 export async function retrieveUsers(query: RetrieveUsersQuery): Promise<RetrieveUsersResult> {
 	const where = query.role ? { role: query.role } : {};
 	const [total, users] = await Promise.all([
@@ -147,10 +161,21 @@ export async function retrieveUsers(query: RetrieveUsersQuery): Promise<Retrieve
 	};
 }
 
+/**
+ * Convenience wrapper to create an organizer account.
+ */
 export async function createOrganizerAccount(input: RegisterInput): Promise<{ user: PublicUser; token: string }> {
 	return createManagedUserAccount(input, Role.ORGANIZER);
 }
 
+/**
+ * Delete an organizer and all related resources.
+ * This operation is executed inside a transaction and will remove:
+ * - tickets purchased by the organizer (if any)
+ * - tickets for events organized by the user
+ * - events organized by the user
+ * - the user record itself (guarded by role check)
+ */
 export async function deleteOrganizerAccount(userId: string): Promise<DeletedOrganizerSummary> {
 	const organizer = await prisma.user.findUnique({
 		where: {
@@ -228,6 +253,9 @@ export async function deleteOrganizerAccount(userId: string): Promise<DeletedOrg
 	};
 }
 
+/**
+ * Delete an attendee account and any tickets they own.
+ */
 export async function deleteAttendeeAccount(userId: string): Promise<DeletedAttendeeSummary> {
 	const attendee = await prisma.user.findUnique({
 		where: {

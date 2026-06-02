@@ -1,6 +1,0 @@
-{"environment":"development","level":"info","message":"Starting backend service.","service":"event-ticketing-backend","timestamp":"2026-06-02T11:26:36.598Z"}
-{"environment":"development","level":"info","message":"HTTP server is ready and accepting requests.","service":"event-ticketing-backend","timestamp":"2026-06-02T11:26:36.846Z","url":"http://localhost:8080"}
-{"email":"sample@gmail.com","environment":"development","level":"info","message":"Managed user account created.","role":"ORGANIZER","service":"event-ticketing-backend","timestamp":"2026-06-02T11:27:49.628Z","userId":"168255e8-6579-407d-8533-1d0bf8feb7f6"}
-{"email":"sample@gmail.com","environment":"development","level":"warn","message":"Auth registration blocked: email already exists.","service":"event-ticketing-backend","timestamp":"2026-06-02T11:28:32.479Z","userId":"168255e8-6579-407d-8533-1d0bf8feb7f6"}
-{"environment":"development","level":"warn","message":"Email is already registered.","requestId":"d0035faa-979f-4411-976e-103fced520f8","service":"event-ticketing-backend","statusCode":409,"timestamp":"2026-06-02T11:28:32.491Z"}
-{"email":"sampleattendee@gmail.com","environment":"development","level":"info","message":"Auth registration completed.","role":"ATTENDEE","service":"event-ticketing-backend","timestamp":"2026-06-02T11:28:48.896Z","userId":"8bf2f4b2-dabd-400e-8ffe-ff739e6b835d"}
