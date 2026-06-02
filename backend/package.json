@@ -29,7 +29,8 @@
     "pg": "^8.21.0",
     "uuid": "^14.0.0",
     "winston": "^3.19.0",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "qrcode": "^1.5.1"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

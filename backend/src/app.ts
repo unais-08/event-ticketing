@@ -5,6 +5,8 @@ import { attachRequestId, httpLogger } from "./middlewares/request-logger.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import adminUsersRoutes from "./modules/users/admin/users/admin-users.routes.js";
 import organizersRoutes from "./modules/organizers/organizers.routes.js";
+import attendeesRoutes from "./modules/attendees/attendees.routes.js";
+import checkinRoutes from "./modules/checkin/checkin.routes.js";
 const app: Express = express();
 
 app.use(attachRequestId);
@@ -14,6 +16,8 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/admin/users", adminUsersRoutes);
 app.use("/api/organizers", organizersRoutes);
+app.use("/api/attendees", attendeesRoutes);
+app.use("/api/checkin", checkinRoutes);
 
 app.get("/", (_req: Request, res: Response) => {
   res.send({ message: "Express + TypeScript Server is running!" });
