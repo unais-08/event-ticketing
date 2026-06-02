@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { Role } from "@prisma/client";
-import { requireAuth } from "../../auth/auth.middleware.js";
-import { requireRole } from "../../auth/auth.middleware.js";
+import { requireAuth } from "../../../auth/auth.middleware.js";
+import { requireRole } from "../../../auth/auth.middleware.js";
 import { createOrganizer, removeAttendee, removeOrganizer, retrieveUsers } from "./admin-users.controller.js";
 
 const router = Router();

@@ -1,9 +1,9 @@
 import { hash } from "bcryptjs";
 import { Role } from "@prisma/client";
-import prisma from "../../../config/prisma.js";
-import { logger } from "../../../config/logger.js";
-import { createAuthSession, type PublicUser } from "../../auth/auth.service.js";
-import type { RegisterInput } from "../../auth/auth.validation.js";
+import prisma from "../../../../config/prisma.js";
+import { logger } from "../../../../config/logger.js";
+import { createAuthSession, type PublicUser } from "../../../auth/auth.service.js";
+import type { RegisterInput } from "../../../auth/auth.validation.js";
 
 const SALT_ROUNDS = 12;
 

@@ -3,7 +3,7 @@ import prisma from "./config/prisma.js";
 import { logger, serializeError } from "./config/logger.js";
 import { attachRequestId, httpLogger } from "./middlewares/request-logger.js";
 import authRoutes from "./modules/auth/auth.routes.js";
-import adminUsersRoutes from "./modules/admin/users/admin-users.routes.js";
+import adminUsersRoutes from "./modules/users/admin/users/admin-users.routes.js";
 const app: Express = express();
 
 app.use(attachRequestId);
