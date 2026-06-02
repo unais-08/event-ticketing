@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { hash } from "bcryptjs";
+import { Role } from "@prisma/client";
 import prisma from "./prisma.js";
 import { logger, serializeError } from "./logger.js";
 
@@ -12,13 +13,21 @@ async function main() {
 
   const passwordHash = await hash("Password123!", 10);
 
-  const [admin, attendeeOne, attendeeTwo] = await Promise.all([
+  const [admin, organizer, attendeeOne, attendeeTwo] = await Promise.all([
     prisma.user.create({
       data: {
         name: "Admin User",
         email: "admin@example.com",
         password: passwordHash,
-        role: "ADMIN",
+        role: Role.ADMIN,
+      },
+    }),
+    prisma.user.create({
+      data: {
+        name: "Organizer User",
+        email: "organizer@example.com",
+        password: passwordHash,
+        role: Role.ORGANIZER,
       },
     }),
     prisma.user.create({
@@ -45,6 +54,7 @@ async function main() {
         location: "Central Park, New York",
         date: new Date("2026-08-15T18:00:00.000Z"),
         capacity: 500,
+        organizerId: organizer.id,
       },
     }),
     prisma.event.create({
@@ -54,18 +64,13 @@ async function main() {
         location: "Javits Center, New York",
         date: new Date("2026-09-10T09:00:00.000Z"),
         capacity: 300,
+        organizerId: organizer.id,
       },
     }),
   ]);
 
   await prisma.ticket.createMany({
     data: [
-      {
-        userId: admin.id,
-        eventId: eventOne.id,
-        qrCode: "QR-ADMIN-001",
-        checkedIn: true,
-      },
       {
         userId: attendeeOne.id,
         eventId: eventOne.id,
@@ -82,9 +87,9 @@ async function main() {
   });
 
   logger.info("Database seed completed successfully.", {
-    users: 3,
+    users: 4,
     events: 2,
-    tickets: 3,
+    tickets: 2,
   });
 }
 

@@ -169,11 +169,12 @@ export function extractBearerToken(authorizationHeader: string | undefined): str
 	return token;
 }
 
+
 /**
- * Register a new user:
+ * Register a new attendee user.
  * - Checks for existing user by email
  * - Hashes the password
- * - Creates the user record with a default role
+ * - Creates the user record with the attendee role
  * - Returns an auth session (user + token)
  */
 export async function registerUser(input: RegisterInput): Promise<{ user: PublicUser; token: string }> {
@@ -198,7 +199,7 @@ export async function registerUser(input: RegisterInput): Promise<{ user: Public
 			name: input.name,
 			email: input.email,
 			password: passwordHash,
-			role: Role.USER,
+			role: Role.ATTENDEE,
 		},
 		select: publicUserSelect,
 	});

@@ -10,6 +10,9 @@ declare module "express-serve-static-core" {
 	}
 }
 
+/**
+ * Validates the bearer token, loads the authenticated user, and attaches the user to the request.
+ */
 export async function requireAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
 	try {
 		const token = extractBearerToken(req.header("authorization"));
@@ -44,6 +47,9 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
 	}
 }
 
+/**
+ * Ensures the authenticated user has one of the permitted roles.
+ */
 export function requireRole(...allowedRoles: Role[]) {
 	return (req: Request, res: Response, next: NextFunction): void => {
 		if (!req.authUser) {
@@ -73,6 +79,9 @@ export function requireRole(...allowedRoles: Role[]) {
 	};
 }
 
+/**
+ * Checks whether an unknown error matches the expected authentication error shape.
+ */
 function isAuthError(error: unknown): error is AuthError {
 	return typeof error === "object" && error !== null && "statusCode" in error && "message" in error && typeof (error as AuthError).statusCode === "number";
 }

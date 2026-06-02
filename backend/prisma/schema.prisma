@@ -13,60 +13,56 @@ enum Role {
 }
 
 model User {
-  id            String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  name          String
-  email         String   @unique
-  password      String
+  name     String
+  email    String @unique
+  password String
 
-  role          Role     @default(ATTENDEE)
+  role Role @default(ATTENDEE)
 
-  tickets       Ticket[]
+  tickets Ticket[]
 
-  organizedEvents Event[] @relation("EventOrganizer")
+  organizedEvents Event[] @relation(name: "EventOrganizer")
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Event {
-  id            String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  title         String
-  description   String
-  location      String
+  title       String
+  description String
+  location    String
 
-  date          DateTime
-  capacity      Int
+  date     DateTime
+  capacity Int
 
-  organizerId   String
+  organizerId String
 
-  organizer     User @relation(
-    "EventOrganizer",
-    fields: [organizerId],
-    references: [id]
-  )
+  organizer User @relation(name: "EventOrganizer", fields: [organizerId], references: [id])
 
-  tickets       Ticket[]
+  tickets Ticket[]
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Ticket {
-  id            String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  userId        String
-  user          User @relation(fields: [userId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 
-  eventId       String
-  event         Event @relation(fields: [eventId], references: [id])
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id])
 
-  qrCode        String   @unique
+  qrCode String @unique
 
-  checkedIn     Boolean  @default(false)
+  checkedIn Boolean @default(false)
 
-  createdAt     DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@unique([userId, eventId])
 }
