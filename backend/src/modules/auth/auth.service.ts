@@ -6,11 +6,25 @@ import prisma from "../../config/prisma.js";
 import { logger } from "../../config/logger.js";
 import type { LoginInput, RegisterInput } from "./auth.validation.js";
 
+/**
+ * Number of salt rounds used by bcrypt when hashing passwords.
+ * Higher values increase security but also CPU cost.
+ */
 const SALT_ROUNDS = 12;
+
+/**
+ * JWT configuration values. `JWT_SECRET` is required and loaded from
+ * environment variables. `JWT_EXPIRES_IN` can be overridden by env.
+ */
 const JWT_SECRET = getRequiredEnv("JWT_SECRET");
 const JWT_EXPIRES_IN = (process.env.JWT_EXPIRES_IN ?? "1d") as NonNullable<SignOptions["expiresIn"]>;
 const JWT_ISSUER = "event-ticketing-api";
 
+/**
+ * Prisma select objects used to limit which user fields are returned from the DB.
+ * - `publicUserSelect` omits sensitive fields like `password`.
+ * - `loginUserSelect` includes `password` because it's needed for authentication.
+ */
 const publicUserSelect = {
 	id: true,
 	name: true,
@@ -24,14 +38,23 @@ const loginUserSelect = {
 	password: true,
 } as const;
 
+/**
+ * Public shape of a user returned by the auth APIs.
+ */
 export type PublicUser = Pick<User, "id" | "name" | "email" | "role" | "createdAt">;
 
+/**
+ * Additional properties included in our JWT payload.
+ */
 export interface AuthTokenPayload extends JwtPayload {
 	email: string;
 	name: string;
 	role: Role;
 }
 
+/**
+ * Custom error used throughout the auth module that includes an HTTP status code.
+ */
 export class AuthError extends Error {
 	readonly statusCode: number;
 
@@ -42,6 +65,10 @@ export class AuthError extends Error {
 	}
 }
 
+/**
+ * Helper to read a required environment variable and throw a descriptive error
+ * if it's missing. Used at startup for required secrets.
+ */
 function getRequiredEnv(name: string): string {
 	const value = process.env[name];
 
@@ -52,6 +79,10 @@ function getRequiredEnv(name: string): string {
 	return value;
 }
 
+/**
+ * Convert a `PublicUser` object into the explicit shape returned to clients.
+ * This function exists to centralize any future transformations.
+ */
 function toPublicUser(user: PublicUser): PublicUser {
 	return {
 		id: user.id,
@@ -62,6 +93,10 @@ function toPublicUser(user: PublicUser): PublicUser {
 	};
 }
 
+/**
+ * Create a signed JWT for a user.
+ * The token includes a small payload (email, name, role) and sets `sub` to the user id.
+ */
 function createAuthToken(user: PublicUser): string {
 	return jwt.sign(
 		{
@@ -78,6 +113,9 @@ function createAuthToken(user: PublicUser): string {
 	);
 }
 
+/**
+ * Build an auth session object returned after successful registration/login.
+ */
 export function createAuthSession(user: PublicUser) {
 	return {
 		user: toPublicUser(user),
@@ -87,6 +125,10 @@ export function createAuthSession(user: PublicUser) {
 	};
 }
 
+/**
+ * Verify a JWT and return its payload with a `sub` (subject) field.
+ * Throws `AuthError` for invalid tokens.
+ */
 export function verifyAuthToken(token: string): AuthTokenPayload & { sub: string } {
 	const decoded = jwt.verify(token, JWT_SECRET, {
 		issuer: JWT_ISSUER,
@@ -96,6 +138,7 @@ export function verifyAuthToken(token: string): AuthTokenPayload & { sub: string
 		throw new AuthError("Invalid authentication token.", 401);
 	}
 
+	// Ensure the expected fields are present on the decoded payload.
 	if (
 		typeof decoded.sub !== "string" ||
 		typeof decoded.email !== "string" ||
@@ -108,6 +151,10 @@ export function verifyAuthToken(token: string): AuthTokenPayload & { sub: string
 	return decoded as unknown as AuthTokenPayload & { sub: string };
 }
 
+/**
+ * Extract the Bearer token string from an Authorization header value.
+ * Validates that the header uses the `Bearer` scheme and contains only the token.
+ */
 export function extractBearerToken(authorizationHeader: string | undefined): string {
 	if (!authorizationHeader) {
 		throw new AuthError("Authorization header is required.", 401);
@@ -122,6 +169,13 @@ export function extractBearerToken(authorizationHeader: string | undefined): str
 	return token;
 }
 
+/**
+ * Register a new user:
+ * - Checks for existing user by email
+ * - Hashes the password
+ * - Creates the user record with a default role
+ * - Returns an auth session (user + token)
+ */
 export async function registerUser(input: RegisterInput): Promise<{ user: PublicUser; token: string }> {
 	const existingUser = await prisma.user.findUnique({
 		where: {
@@ -158,6 +212,9 @@ export async function registerUser(input: RegisterInput): Promise<{ user: Public
 	return createAuthSession(user);
 }
 
+/**
+ * Authenticate a user by email + password and return an auth session.
+ */
 export async function loginUser(input: LoginInput): Promise<{ user: PublicUser; token: string }> {
 	const user = await prisma.user.findUnique({
 		where: {
@@ -192,6 +249,9 @@ export async function loginUser(input: LoginInput): Promise<{ user: PublicUser; 
 	return createAuthSession(user);
 }
 
+/**
+ * Fetch the authenticated user record by id and return the public view.
+ */
 export async function getAuthenticatedUser(userId: string): Promise<PublicUser> {
 	const user = await prisma.user.findUnique({
 		where: {
