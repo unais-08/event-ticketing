@@ -27,9 +27,9 @@ export async function generateTicketQrDataUrl(ticketId: string, hostUrl = "https
 
 /**
  * Validate a QR token and mark the ticket as checked in.
- * Only the event's organizer or an admin should be allowed to perform check-in.
+ * Only the event's organizer, a checker, or an admin should be allowed to perform check-in.
  */
-export async function validateAndCheckin(token: string, requesterId: string, allowAdmin = false) {
+export async function validateAndCheckin(token: string, requesterId: string, canBypassOwnership = false) {
   let payload: any;
 
   try {
@@ -61,7 +61,7 @@ export async function validateAndCheckin(token: string, requesterId: string, all
     throw new Error("Event organizer not found");
   }
 
-  if (!allowAdmin && requesterId !== organizer.id) {
+  if (!canBypassOwnership && requesterId !== organizer.id) {
     throw new Error("Not authorized to check in this ticket");
   }
 

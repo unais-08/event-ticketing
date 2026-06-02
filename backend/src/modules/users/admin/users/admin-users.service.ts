@@ -169,6 +169,13 @@ export async function createOrganizerAccount(input: RegisterInput): Promise<{ us
 }
 
 /**
+ * Convenience wrapper to create a checker account.
+ */
+export async function createCheckerAccount(input: RegisterInput): Promise<{ user: PublicUser; token: string }> {
+	return createManagedUserAccount(input, Role.CHECKER);
+}
+
+/**
  * Delete an organizer and all related resources.
  * This operation is executed inside a transaction and will remove:
  * - tickets purchased by the organizer (if any)
@@ -303,6 +310,56 @@ export async function deleteAttendeeAccount(userId: string): Promise<DeletedAtte
 	};
 }
 
+/**
+ * Delete a checker account and any tickets they own.
+ */
+export async function deleteCheckerAccount(userId: string): Promise<DeletedCheckerSummary> {
+	const checker = await prisma.user.findUnique({
+		where: {
+			id: userId,
+		},
+		select: {
+			id: true,
+			role: true,
+		},
+	});
+
+	if (!checker) {
+		throw new AdminUsersError("Checker was not found.", 404);
+	}
+
+	if (checker.role !== Role.CHECKER) {
+		throw new AdminUsersError("Only checker accounts can be deleted through this action.", 400);
+	}
+
+	const ticketDeleteResult = await prisma.$transaction(async (transaction) => {
+		const deletedTickets = await transaction.ticket.deleteMany({
+			where: {
+				userId: checker.id,
+			},
+		});
+
+		await transaction.user.deleteMany({
+			where: {
+				id: checker.id,
+				role: Role.CHECKER,
+			},
+		});
+
+		return deletedTickets;
+	});
+
+	logger.info("Checker account deleted.", {
+		userId: checker.id,
+		ticketCount: ticketDeleteResult.count,
+	});
+
+	return {
+		userId: checker.id,
+		ticketCount: ticketDeleteResult.count,
+	};
+}
+
 export interface DeletedOrganizerSummary {
 	userId: string;
 	eventCount: number;
@@ -311,6 +368,11 @@ export interface DeletedOrganizerSummary {
 }
 
 export interface DeletedAttendeeSummary {
+	userId: string;
+	ticketCount: number;
+}
+
+export interface DeletedCheckerSummary {
 	userId: string;
 	ticketCount: number;
 }

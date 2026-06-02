@@ -4,8 +4,10 @@ import { logger, serializeError } from "../../../../config/logger.js";
 import { registerSchema } from "../../../auth/auth.validation.js";
 import {
 	createOrganizerAccount,
+	createCheckerAccount,
 	type AdminUsersError,
 	deleteAttendeeAccount,
+	deleteCheckerAccount,
 	deleteOrganizerAccount,
 	retrieveUsers as retrieveUsersService,
 } from "./admin-users.service.js";
@@ -188,5 +190,65 @@ export async function removeAttendee(req: Request, res: Response): Promise<void>
 		});
 	} catch (error) {
 		handleAdminUserError(res, req.requestId, error, "attendee deletion");
+	}
+}
+
+/**
+ * POST /api/admin/users/checkers
+ * Creates a checker account from the admin panel.
+ */
+export async function createChecker(req: Request, res: Response): Promise<void> {
+	const parsedBody = registerSchema.safeParse(req.body);
+
+	if (!parsedBody.success) {
+		logger.warn("Checker creation validation failed.", {
+			requestId: req.requestId,
+			issues: parsedBody.error.flatten().fieldErrors,
+		});
+
+		res.status(400).json({
+			message: "Validation failed.",
+			errors: parsedBody.error.flatten().fieldErrors,
+		});
+
+		return;
+	}
+
+	try {
+		const session = await createCheckerAccount(parsedBody.data);
+
+		res.status(201).json({
+			message: "Checker account created successfully.",
+			data: session,
+		});
+	} catch (error) {
+		handleAdminUserError(res, req.requestId, error, "checker creation");
+	}
+}
+
+/**
+ * DELETE /api/admin/users/checkers/:userId
+ * Deletes a checker account.
+ */
+export async function removeChecker(req: Request, res: Response): Promise<void> {
+	const checkerId = req.params.userId;
+
+	if (typeof checkerId !== "string" || checkerId.length === 0) {
+		res.status(400).json({
+			message: "Checker id is required.",
+		});
+
+		return;
+	}
+
+	try {
+		const summary = await deleteCheckerAccount(checkerId);
+
+		res.status(200).json({
+			message: "Checker deleted successfully.",
+			data: summary,
+		});
+	} catch (error) {
+		handleAdminUserError(res, req.requestId, error, "checker deletion");
 	}
 }

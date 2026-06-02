@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { Role } from "@prisma/client";
 import prisma from "../../config/prisma.js";
 import { logger, serializeError } from "../../config/logger.js";
 import { generateTicketQrDataUrl, validateAndCheckin } from "./checkin.service.js";
@@ -42,8 +43,8 @@ export async function getTicketQr(req: Request, res: Response, p0: any): Promise
 }
 
 /**
- * Endpoint used by organizers/admins at check-in time.
- * The route verifies the token, checks authorization (organizer or admin), and marks ticket as checked-in.
+ * Endpoint used by organizers/checkers/admins at check-in time.
+ * The route verifies the token, checks authorization, and marks ticket as checked-in.
  */
 export async function checkinByToken(req: Request, res: Response): Promise<void> {
   const token = req.params.token || req.body?.token;
@@ -54,9 +55,8 @@ export async function checkinByToken(req: Request, res: Response): Promise<void>
   }
 
   try {
-    // allowAdmin flag: admins are permitted via middleware by passing in req.authUser
-    const allowAdmin = req.authUser?.role === "ADMIN";
-    const result = await validateAndCheckin(token, req.authUser!.id, allowAdmin);
+    const canBypassOwnership = req.authUser?.role === Role.ADMIN || req.authUser?.role === Role.CHECKER;
+    const result = await validateAndCheckin(token, req.authUser!.id, canBypassOwnership);
     res.status(200).json({ message: "Check-in processed.", data: result });
   } catch (error) {
     logger.warn("Check-in failed.", { requestId: req.requestId, error: serializeError(error) });
