@@ -4,8 +4,8 @@ import { logger, serializeError } from "./config/logger.js";
 import { attachRequestId, httpLogger } from "./middlewares/request-logger.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import adminUsersRoutes from "./modules/users/admin/users/admin-users.routes.js";
-import organizersRoutes from "./modules/organizers/organizers.routes.js";
-import attendeesRoutes from "./modules/attendees/attendees.routes.js";
+import organizersRoutes from "./modules/users/organizers/organizers.routes.js";
+import attendeesRoutes from "./modules/users/attendees/attendees.routes.js";
 import checkinRoutes from "./modules/checkin/checkin.routes.js";
 const app: Express = express();
 

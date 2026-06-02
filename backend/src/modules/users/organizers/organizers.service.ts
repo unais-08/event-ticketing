@@ -1,6 +1,6 @@
 import { Role } from "@prisma/client";
-import prisma from "../../config/prisma.js";
-import { logger } from "../../config/logger.js";
+import prisma from "../../../config/prisma.js";
+import { logger } from "../../../config/logger.js";
 
 /**
  * Services used by organizer-facing endpoints.

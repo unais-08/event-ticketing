@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { requireAuth, requireRole } from "../auth/auth.middleware.js";
+import { requireAuth, requireRole } from "../../auth/auth.middleware.js";
 import { Role } from "@prisma/client";
 import {
   listEvents,

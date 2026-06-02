@@ -6,7 +6,7 @@ import { generateTicketQrDataUrl, validateAndCheckin } from "./checkin.service.j
 /**
  * Return a QR code image (data URL) for the authenticated user's ticket.
  */
-export async function getTicketQr(req: Request, res: Response): Promise<void> {
+export async function getTicketQr(req: Request, res: Response, p0: any): Promise<void> {
   const ticketId = req.params.ticketId;
   if (typeof ticketId !== "string" || ticketId.length === 0) {
     res.status(400).json({ message: "Ticket id is required." });

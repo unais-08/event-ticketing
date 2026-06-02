@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { logger, serializeError } from "../../config/logger.js";
+import { logger, serializeError } from "../../../config/logger.js";
 import {
   purchaseTicketSchema,
 } from "./attendees.validation.js";

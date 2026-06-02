@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { requireAuth } from "../auth/auth.middleware.js";
+import { requireAuth } from "../../auth/auth.middleware.js";
 import {
   publicListEvents,
   publicGetEvent,
@@ -23,7 +23,7 @@ router.delete("/tickets/:ticketId", requireAuth, cancelMyTicket);
 router.get("/tickets/:ticketId/qr", requireAuth, async (req, res, next) => {
   // delegate to checkin QR generator to avoid duplication
   // lazy import to prevent circular deps
-  const { getTicketQr } = await import("../checkin/checkin.controller.js");
+  const { getTicketQr } = await import("../../checkin/checkin.controller.js");
   return getTicketQr(req, res, next as any);
 });
 

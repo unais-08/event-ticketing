@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { Role } from "@prisma/client";
-import { logger, serializeError } from "../../config/logger.js";
+import { logger, serializeError } from "../../../config/logger.js";
 import {
   createEventSchema,
   updateEventSchema,
