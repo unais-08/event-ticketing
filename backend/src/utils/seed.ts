@@ -1,8 +1,8 @@
 import "dotenv/config";
 import { hash } from "bcryptjs";
 import { Role } from "@prisma/client";
-import prisma from "./prisma.js";
-import { logger, serializeError } from "./logger.js";
+import prisma from "../config/prisma.js";
+import { logger, serializeError } from "../config/logger.js";
 
 async function main() {
   logger.info("Database seed started.");
