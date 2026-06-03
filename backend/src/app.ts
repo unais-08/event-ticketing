@@ -1,4 +1,5 @@
 import express, { type Express, type Request, type Response } from "express";
+import cors from "cors";
 import prisma from "./config/prisma.js";
 import { logger, serializeError } from "./config/logger.js";
 import { attachRequestId, httpLogger } from "./middlewares/request-logger.js";
@@ -12,7 +13,10 @@ const app: Express = express();
 app.use(attachRequestId);
 app.use(httpLogger);
 app.use(express.json());
-
+app.use(cors({
+  origin:"http://localhost:3000",
+  credentials: true,
+}));
 app.use("/api/auth", authRoutes);
 app.use("/api/admin/users", adminUsersRoutes);
 app.use("/api/organizers", organizersRoutes);
