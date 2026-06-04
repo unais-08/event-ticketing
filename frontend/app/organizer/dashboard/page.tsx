@@ -12,6 +12,7 @@ import { useAuthStore } from "@/app/_stores/auth-store";
 import Card from "@/app/_components/ui/card";
 import { Button } from "@/app/_components/ui/button";
 import Pill from "@/app/_components/ui/pill";
+import RoleGuard from "@/app/_components/auth/role-guard";
 
 export default function OrganizerDashboardPage() {
   const user = useAuthStore((state) => state.user);
@@ -73,6 +74,7 @@ export default function OrganizerDashboardPage() {
   const occupancy = totalCapacity > 0 ? Math.round((totalTickets / totalCapacity) * 100) : 0;
 
   return (
+    <RoleGuard allowedRoles={["ADMIN", "ORGANIZER"]}>
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-8">
       <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <Card className="space-y-5">
@@ -204,5 +206,6 @@ export default function OrganizerDashboardPage() {
         </div>
       )}
     </div>
+    </RoleGuard>
   );
 }

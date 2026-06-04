@@ -10,6 +10,7 @@
 	--color-accent-strong: #b6432b;
 	--color-border: #e3d9cc;
 	--shadow-soft: 0 20px 60px -40px rgba(13, 13, 13, 0.45);
+	--color-danger: #FF0000;
 }
 
 * {

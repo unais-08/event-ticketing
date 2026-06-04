@@ -10,11 +10,12 @@ import type { PublicEventDetails } from "@/app/_lib/types";
 
 import Card from "@/app/_components/ui/card";
 import { Button } from "@/app/_components/ui/button";
+import { useAuthStore } from "@/app/_stores/auth-store";
 
 export default function EventDetailsPage() {
   const params = useParams();
   const eventId = params.eventId as string;
-
+  const user = useAuthStore((state) => state.user);
   const [event, setEvent] = useState<PublicEventDetails | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -193,21 +194,27 @@ export default function EventDetailsPage() {
                 <span>{availableTickets}</span>
               </div>
             </div>
+            {
+              user ? (<Button
+                className="mt-6 w-full"
+                onClick={handlePurchase}
+                disabled={
+                  isPurchasing ||
+                  availableTickets <= 0
+                }
+              >
+                {isPurchasing
+                  ? "Purchasing..."
+                  : availableTickets <= 0
+                    ? "Sold Out"
+                    : "Purchase Ticket"}
+              </Button>):(
+                <p className="mt-6 text-center text-sm text-[var(--color-danger)]">
+                  Please log in to purchase a ticket.
+                </p>
+              )
+            }
 
-            <Button
-              className="mt-6 w-full"
-              onClick={handlePurchase}
-              disabled={
-                isPurchasing ||
-                availableTickets <= 0
-              }
-            >
-              {isPurchasing
-                ? "Purchasing..."
-                : availableTickets <= 0
-                  ? "Sold Out"
-                  : "Purchase Ticket"}
-            </Button>
 
             {successMessage && (
               <div className="mt-4 rounded-xl border border-green-200 bg-green-50 p-3">

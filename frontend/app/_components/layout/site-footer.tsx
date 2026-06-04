@@ -9,15 +9,16 @@ export default function SiteFooter() {
           <p className="text-base font-semibold text-[var(--color-ink)]">Ticketing and check-ins for modern events.</p>
         </div>
         <div className="flex flex-wrap items-center gap-4">
-          <Link className="transition hover:text-[var(--color-ink)]" href="/">
+          <Link href="/" className="transition hover:text-[var(--color-ink)]">
+            Home
+          </Link>
+          <Link className="transition hover:text-[var(--color-ink)]" href="/events">
             Events
           </Link>
           <Link className="transition hover:text-[var(--color-ink)]" href="/tickets">
             Tickets
           </Link>
-          <Link className="transition hover:text-[var(--color-ink)]" href="/login">
-            Login
-          </Link>
+
         </div>
       </div>
     </footer>

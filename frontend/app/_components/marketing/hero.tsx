@@ -4,7 +4,7 @@ import Pill from "@/app/_components/ui/pill";
 
 export default function Hero() {
   return (
-    <section className="mx-auto w-full max-w-6xl px-6 pt-16">
+    <section className="mx-auto w-full max-w-6xl px-6 pt-8">
       <div className="grid gap-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
         <div className="space-y-6">
           <Pill>Live operations</Pill>
@@ -25,9 +25,6 @@ export default function Hero() {
             </Link>
             <Link className={buttonStyles({ variant: "outline", size: "lg" })} href="/login">
               Organizer login
-            </Link>
-            <Link className={buttonStyles({ variant: "outline", size: "lg" })} href="/organizer/dashboard">
-              Organizer View
             </Link>
           </div>
         </div>

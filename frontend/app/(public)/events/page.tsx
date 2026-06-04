@@ -28,7 +28,7 @@ export default function EventsPage() {
       try {
         const response = await getPublicEvents({
           page,
-          limit: 9,
+          limit: 6,
         });
 
         if (!active) return;
