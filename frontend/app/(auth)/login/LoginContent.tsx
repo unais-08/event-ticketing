@@ -9,7 +9,7 @@ import Label from "@/app/_components/ui/label";
 import { Button } from "@/app/_components/ui/button";
 import { useAuthStore } from "@/app/_stores/auth-store";
 import { getRoleHomePath } from "@/app/_lib/roles";
-import { Role } from "../_lib/types";
+import { Role } from "../../_lib/types";
 
 export default function LoginContent() {
   const router = useRouter();
