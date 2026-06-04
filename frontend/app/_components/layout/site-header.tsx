@@ -1,16 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/app/_stores/auth-store";
 import { buttonStyles } from "@/app/_components/ui/button";
 import Pill from "@/app/_components/ui/pill";
 import React from "react";
+import { getRoleHomePath, getRoleLabel, isOperationalRole } from "@/app/_lib/roles";
 
 export default function SiteHeader() {
+  const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const clearSession = useAuthStore((state) => state.clearSession);
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
+// console.log(user); user object{}
+  const handleSignOut = () => {
+    clearSession();
+    router.push("/");
+  };
 
   return (
     <header className="sticky top-0 z-30 border-b border-[var(--color-border)] bg-white/70 backdrop-blur">
@@ -32,14 +40,32 @@ export default function SiteHeader() {
           <Link className="transition hover:text-[var(--color-ink)]" href="/tickets">
             Tickets
           </Link>
+          {mounted && user && isOperationalRole(user.role) && (
+            <>
+              <Link className="transition hover:text-[var(--color-ink)]" href={getRoleHomePath(user.role)}>
+                Workspace
+              </Link>
+              <Link className="transition hover:text-[var(--color-ink)]" href="/check-in">
+                Check-in
+              </Link>
+            </>
+          )}
+          {mounted && user?.role === "ADMIN" && (
+            <Link className="transition hover:text-[var(--color-ink)]" href="/admin/checkers">
+              Admin
+            </Link>
+          )}
         </nav>
 
         <div className="flex items-center gap-3">
           {mounted && user ? (
             <>
-              <Pill className="hidden sm:inline-flex">{user.role}</Pill>
+              <Pill className="hidden sm:inline-flex">{getRoleLabel(user.role)}</Pill>
               <span className="hidden text-sm font-semibold text-[var(--color-ink)] sm:inline">{user.name}</span>
-              <button className={buttonStyles({ variant: "ghost", size: "sm" })} onClick={clearSession} type="button">
+              <Link className={buttonStyles({ variant: "outline", size: "sm" })} href={getRoleHomePath(user.role)}>
+                Open app
+              </Link>
+              <button className={buttonStyles({ variant: "ghost", size: "sm" })} onClick={handleSignOut} type="button">
                 Sign out
               </button>
             </>

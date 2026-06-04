@@ -65,6 +65,63 @@ export interface PublicEventDetails {
   updatedAt?: string | null;
 }
 
+export interface OrganizerEventListItem {
+  id: string;
+  title: string;
+  description: string;
+  location: string;
+  date: string;
+  capacity: number;
+  ticketCount: number;
+  createdAt: string;
+  updatedAt?: string | null;
+}
+
+export interface OrganizerEventDetails extends OrganizerEventListItem {}
+
+export interface OrganizerEventFormInput {
+  title: string;
+  description: string;
+  location: string;
+  date: string;
+  capacity: number;
+}
+
+export interface OrganizerTicketItem {
+  id: string;
+  qrCode: string;
+  checkedIn: boolean;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  createdAt: string;
+}
+
+export interface CheckinResult {
+  alreadyCheckedIn: boolean;
+  ticketId: string;
+  ticket?: {
+    id: string;
+    checkedIn: boolean;
+  };
+}
+
+export interface AdminUserListItem {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+  createdAt: string;
+  updatedAt: string;
+  ticketCount: number;
+  organizedEventCount: number;
+}
+
+export interface AdminUserListResponse {
+  users: AdminUserListItem[];
+  meta: PaginationMeta;
+}
+
 export interface TicketListItem {
   id: string;
   qrCode: string;

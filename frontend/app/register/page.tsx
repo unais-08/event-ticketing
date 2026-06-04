@@ -9,6 +9,7 @@ import Input from "@/app/_components/ui/input";
 import Label from "@/app/_components/ui/label";
 import { Button } from "@/app/_components/ui/button";
 import { useAuthStore } from "@/app/_stores/auth-store";
+import { getRoleHomePath } from "@/app/_lib/roles";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -30,10 +31,10 @@ export default function RegisterPage() {
         setSession(res.data);
       } else {
         const me = await getMe();
-        setSession({ user: me.data!.user, token: me.data?.token ?? "", tokenType: "Bearer", expiresIn: "" });
+        setSession({ user: me.data!.user, token: "", tokenType: "Bearer", expiresIn: "" });
       }
 
-      router.push("/");
+      router.push(getRoleHomePath(res.data?.user.role ?? undefined));
     } catch (err) {
       setError(getApiErrorMessage(err, "Unable to create an account."));
     } finally {
