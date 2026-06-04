@@ -1,11 +1,11 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/app/_stores/auth-store";
 import { buttonStyles } from "@/app/_components/ui/button";
 import Pill from "@/app/_components/ui/pill";
-import React from "react";
 import { getRoleHomePath, getRoleLabel, isOperationalRole } from "@/app/_lib/roles";
 
 export default function SiteHeader() {
@@ -34,7 +34,7 @@ export default function SiteHeader() {
         </div>
 
         <nav className="hidden items-center gap-6 text-sm font-semibold text-[var(--color-ink-muted)] md:flex">
-          <Link className="transition hover:text-[var(--color-ink)]" href="/">
+          <Link className="transition hover:text-[var(--color-ink)]" href="/events">
             Events
           </Link>
           <Link className="transition hover:text-[var(--color-ink)]" href="/tickets">
@@ -62,9 +62,9 @@ export default function SiteHeader() {
             <>
               <Pill className="hidden sm:inline-flex">{getRoleLabel(user.role)}</Pill>
               <span className="hidden text-sm font-semibold text-[var(--color-ink)] sm:inline">{user.name}</span>
-              <Link className={buttonStyles({ variant: "outline", size: "sm" })} href={getRoleHomePath(user.role)}>
+              {/* <Link className={buttonStyles({ variant: "outline", size: "sm" })} href={getRoleHomePath(user.role)}>
                 Open app
-              </Link>
+              </Link> */}
               <button className={buttonStyles({ variant: "ghost", size: "sm" })} onClick={handleSignOut} type="button">
                 Sign out
               </button>

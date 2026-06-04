@@ -50,7 +50,7 @@ const WORKSPACE_COPY: Record<Role, { eyebrow: string; title: string; description
     title: "Browse events, manage tickets, and keep your QR ready.",
     description: "Your experience stays centered on discovery and ticket access while role-specific operations stay out of the way.",
     actions: [
-      { label: "Browse events", href: "/", description: "Find the next event to join.", variant: "primary" },
+      { label: "Browse events", href: "/events", description: "Find the next event to join.", variant: "primary" },
       { label: "My tickets", href: "/tickets", description: "Open your purchased tickets and QR codes.", variant: "outline" },
       { label: "Log in as organizer", href: "/login", description: "Switch into an organizer account if needed.", variant: "outline" },
     ],

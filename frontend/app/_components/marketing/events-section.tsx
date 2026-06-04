@@ -23,6 +23,7 @@ export default function EventsSection() {
         const response = await getPublicEvents({ page: 1, limit: 6 });
         if (!isActive) return;
         setEvents(response.data?.events ?? []);
+        console.log(response.data?.events);
       } catch (err) {
         if (!isActive) return;
         setError(getApiErrorMessage(err, "Unable to load events right now."));
