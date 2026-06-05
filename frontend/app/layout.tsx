@@ -4,6 +4,8 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Fraunces, Space_Grotesk } from "next/font/google";
 import AuthProvider from "@/app/_components/auth/auth-provider";
+import LayoutWrapper from "@/app/_components/layout/layout-wrapper";
+
 
 const displayFont = Fraunces({
   subsets: ["latin"],
@@ -28,7 +30,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${displayFont.variable} ${sansFont.variable}`}>
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <LayoutWrapper>{children}</LayoutWrapper>
+        </AuthProvider>
+
       </body>
     </html>
   );

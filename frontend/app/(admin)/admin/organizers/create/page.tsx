@@ -26,7 +26,7 @@ export default function RegisterPage() {
         try {
             await createOrganizerAccount(form);
 
-            alert("Checker account created successfully.");
+            alert("Organizer account created successfully.");
 
             setForm({
                 name: "",

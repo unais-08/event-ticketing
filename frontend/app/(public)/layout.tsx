@@ -14,7 +14,7 @@ export default function PublicLayout({
       </div>
 
       <div className="relative flex min-h-screen flex-col">
-        <SiteHeader />
+        {/* <SiteHeader /> */}
         <main className="flex-1">{children}</main>
         <SiteFooter />
       </div>

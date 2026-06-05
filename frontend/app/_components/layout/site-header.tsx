@@ -83,7 +83,7 @@ export default function SiteHeader() {
 
               <Link
                 className="transition hover:text-[var(--color-ink)]"
-                href="/check-in"
+                href="/organizer/check-in"
               >
                 Check-in
               </Link>
@@ -201,7 +201,7 @@ export default function SiteHeader() {
                   </Link>
 
                   <Link
-                    href="/check-in"
+                    href="/organizer/check-in"
                     onClick={closeMobileMenu}
                     className="rounded-xl px-3 py-3 text-sm font-semibold transition hover:bg-[var(--color-surface)]"
                   >
