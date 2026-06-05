@@ -1,0 +1,4 @@
+- [ ] Update UI styling only for Admin Users page: `frontend/app/(admin)/admin/users/page.tsx` to match checker/organizer layout patterns (spacing/typography/cards/table).
+- [ ] Keep all logic unchanged (state, effects, API calls, filtering, pagination).
+- [ ] Run frontend lint/build/typecheck to ensure no errors.
+- [ ] Verify route `/admin/users` visually (loading, error, empty, mobile/desktop).

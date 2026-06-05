@@ -98,6 +98,22 @@ export async function deleteOrganizerEvent(eventId: string) {
 // Admin APIs
 export async function getAdminUsers(params?: { page?: number; limit?: number; role?: string }) {
   const response = await apiClient.get<ApiResponse<AdminUserListResponse>>(`/admin/users`, { params });
+  console.log("getAdminUsers response:", response.data);
+  return response.data;
+}
+
+export async function deleteAttendeeAccount(userId: string) {
+  const response = await apiClient.delete<ApiResponse<{ userId: string; ticketCount: number }>>(`/admin/users/attendees/${userId}`);
+  return response.data;
+}
+
+export async function createOrganizerAccount(payload: { name: string; email: string; password: string }) {
+  const response = await apiClient.post<ApiResponse<AuthSession>>(`/admin/users/organizers`, payload);
+  return response.data;
+}
+
+export async function deleteOrganizerAccount(userId: string) {
+  const response = await apiClient.delete<ApiResponse<{ userId: string; eventCount: number }>>(`/admin/users/organizers/${userId}`);
   return response.data;
 }
 

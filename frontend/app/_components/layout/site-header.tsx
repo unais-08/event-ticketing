@@ -63,7 +63,7 @@ export default function SiteHeader() {
             Events
           </Link>
 
-          {mounted && user && (
+          {mounted && user?.role !== "ADMIN" && (
             <Link
               className="transition hover:text-[var(--color-ink)]"
               href="/tickets"
@@ -181,7 +181,7 @@ export default function SiteHeader() {
                 Events
               </Link>
 
-              {mounted && user && (
+              {mounted && user?.role !== "ADMIN" && (
                 <Link
                   className="transition hover:text-[var(--color-ink)]"
                   href="/tickets"
