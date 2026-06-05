@@ -223,3 +223,5 @@
 {"environment":"development","level":"info","message":"Attendee account deleted.","service":"event-ticketing-backend","ticketCount":0,"timestamp":"2026-06-05T12:32:10.585Z","userId":"7b14f0cd-7b80-4dce-a9c7-87b23d2f86bc"}
 {"environment":"development","level":"info","message":"Attendee account deleted.","service":"event-ticketing-backend","ticketCount":0,"timestamp":"2026-06-05T12:32:12.957Z","userId":"dcef1a88-3689-42cf-9076-b05acf3630e2"}
 {"environment":"development","level":"info","message":"Attendee account deleted.","service":"event-ticketing-backend","ticketCount":0,"timestamp":"2026-06-05T12:32:58.678Z","userId":"df17411c-7ab8-422d-b4a9-379a79b39706"}
+{"environment":"development","level":"info","message":"Starting backend service.","service":"event-ticketing-backend","timestamp":"2026-06-05T14:19:34.669Z"}
+{"environment":"development","level":"info","message":"HTTP server is ready and accepting requests.","service":"event-ticketing-backend","timestamp":"2026-06-05T14:19:35.030Z","url":"http://localhost:8080"}

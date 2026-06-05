@@ -42,20 +42,29 @@ export const useAuthStore = create<AuthState>((set) => {
       if (session.token) {
         try {
           localStorage.setItem(STORAGE_TOKEN, session.token);
-        } catch {}
+        } catch { }
       }
 
       try {
-        localStorage.setItem(STORAGE_USER, JSON.stringify(session.user));
-      } catch {}
+        localStorage.setItem(
+          STORAGE_USER,
+          JSON.stringify(session.user)
+        );
+      } catch { }
 
-      set({ user: session.user, token: session.token ?? null, status: "authenticated" });
+      document.cookie = `eventflow_role=${session.user.role}; path=/; max-age=3600; samesite=strict`;
+
+      set({
+        user: session.user,
+        token: session.token ?? null,
+        status: "authenticated",
+      });
     },
     setUser: (user) => {
       try {
         if (user) localStorage.setItem(STORAGE_USER, JSON.stringify(user));
         else localStorage.removeItem(STORAGE_USER);
-      } catch {}
+      } catch { }
 
       set({ user, status: user ? "authenticated" : "unauthenticated" });
     },
@@ -64,8 +73,16 @@ export const useAuthStore = create<AuthState>((set) => {
       try {
         localStorage.removeItem(STORAGE_USER);
         localStorage.removeItem(STORAGE_TOKEN);
-      } catch {}
-      set({ user: null, token: null, status: "unauthenticated" });
+      } catch { }
+
+      document.cookie =
+        "eventflow_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+
+      set({
+        user: null,
+        token: null,
+        status: "unauthenticated",
+      });
     },
   };
 });

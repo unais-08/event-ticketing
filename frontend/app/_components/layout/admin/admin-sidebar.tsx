@@ -8,10 +8,6 @@ import {
     UserCog,
     ShieldCheck,
     CalendarDays,
-    Ticket,
-    QrCode,
-    Activity,
-    Settings,
     ArrowLeft,
 } from "lucide-react";
 
@@ -54,33 +50,11 @@ const sections = [
                 href: "/admin/events",
                 icon: CalendarDays,
             },
-            {
-                label: "Tickets",
-                href: "/admin/tickets",
-                icon: Ticket,
-            },
-            {
-                label: "Check-ins",
-                href: "/admin/checkins",
-                icon: QrCode,
-            },
+
         ],
     },
-    {
-        title: "System",
-        items: [
-            {
-                label: "Activity Logs",
-                href: "/admin/activity",
-                icon: Activity,
-            },
-            {
-                label: "Settings",
-                href: "/admin/settings",
-                icon: Settings,
-            },
-        ],
-    },
+
+
 ];
 
 export default function AdminSidebar() {

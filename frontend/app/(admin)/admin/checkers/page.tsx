@@ -2,30 +2,26 @@
 
 import React from "react";
 import Link from "next/link";
-import { createCheckerAccount, deleteCheckerAccount, getAdminUsers } from "@/app/_lib/api";
+import { deleteCheckerAccount, getAdminUsers } from "@/app/_lib/api";
 import { getApiErrorMessage } from "@/app/_lib/errors";
 import { formatDate } from "@/app/_lib/format";
 import type { AdminUserListItem } from "@/app/_lib/types";
 import { useAuthStore } from "@/app/_stores/auth-store";
 import Card from "@/app/_components/ui/card";
 import { Button } from "@/app/_components/ui/button";
-import Input from "@/app/_components/ui/input";
-import Label from "@/app/_components/ui/label";
 import Pill from "@/app/_components/ui/pill";
-import { UserPlus } from "lucide-react";
 
 export default function AdminCheckersPage() {
   const user = useAuthStore((state) => state.user);
   const status = useAuthStore((state) => state.status);
   const [checkers, setCheckers] = React.useState<AdminUserListItem[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const [saving, setSaving] = React.useState(false);
   const [removingId, setRemovingId] = React.useState<string | null>(null);
   const [error, setError] = React.useState("");
   const [message, setMessage] = React.useState("");
-  const [form, setForm] = React.useState({ name: "", email: "", password: "" });
 
-  const canAccess = user?.role === "ADMIN";
+  // Only evaluate canAccess once auth has resolved to avoid SSR/client mismatch
+  const canAccess = status !== "loading" && user?.role === "ADMIN";
 
   const loadCheckers = React.useCallback(async () => {
     if (!canAccess) {
@@ -51,24 +47,6 @@ export default function AdminCheckersPage() {
     void loadCheckers();
   }, [loadCheckers, status]);
 
-  const handleCreate = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setSaving(true);
-    setError("");
-    setMessage("");
-
-    try {
-      await createCheckerAccount(form);
-      setForm({ name: "", email: "", password: "" });
-      setMessage("Checker account created successfully.");
-      await loadCheckers();
-    } catch (err) {
-      setError(getApiErrorMessage(err, "Unable to create checker account."));
-    } finally {
-      setSaving(false);
-    }
-  };
-
   const handleRemove = async (checkerId: string) => {
     const confirm = window.confirm("Delete this checker account?");
 
@@ -90,6 +68,7 @@ export default function AdminCheckersPage() {
       setRemovingId(null);
     }
   };
+
   const totalTickets = checkers.reduce(
     (sum, checker) => sum + checker.ticketCount,
     0
@@ -99,6 +78,9 @@ export default function AdminCheckersPage() {
     (sum, checker) => sum + checker.organizedEventCount,
     0
   );
+
+  // Show a neutral skeleton while auth is unresolved — server and client
+  // must render the same tree on first pass to avoid hydration mismatches.
   if (status === "loading") {
     return (
       <div className="mx-auto max-w-6xl px-6 py-8">
@@ -107,13 +89,18 @@ export default function AdminCheckersPage() {
     );
   }
 
+  // Auth is now resolved on both server and client — safe to branch.
   if (!canAccess) {
     return (
       <div className="mx-auto max-w-4xl px-6 py-8">
         <Card className="space-y-4">
           <Pill>Admin only</Pill>
-          <h1 className="text-3xl font-semibold text-[var(--color-ink)]">Checker management belongs to admin accounts.</h1>
-          <p className="text-sm leading-6 text-[var(--color-ink-muted)]">Sign in with an admin role to create or remove checker users.</p>
+          <h1 className="text-3xl font-semibold text-[var(--color-ink)]">
+            Checker management belongs to admin accounts.
+          </h1>
+          <p className="text-sm leading-6 text-[var(--color-ink-muted)]">
+            Sign in with an admin role to create or remove checker users.
+          </p>
           <Link href="/login">
             <Button size="sm">Log in</Button>
           </Link>
@@ -144,7 +131,15 @@ export default function AdminCheckersPage() {
         </div>
       </div>
 
-      {/* cards */}
+      {error && (
+        <p className="mt-4 text-sm text-red-600">{error}</p>
+      )}
+
+      {message && (
+        <p className="mt-4 text-sm text-green-600">{message}</p>
+      )}
+
+      {/* Summary cards */}
       <div className="mt-5 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
         <Card>
           <p className="text-sm text-[var(--color-ink-muted)]">Total Checkers</p>
@@ -168,7 +163,7 @@ export default function AdminCheckersPage() {
         </Card>
       </div>
 
-      {/* table */}
+      {/* Checker directory table */}
       <div className="mt-6 grid gap-6">
         <div className="space-y-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -283,9 +278,7 @@ export default function AdminCheckersPage() {
                             onClick={() => void handleRemove(checker.id)}
                             disabled={removingId === checker.id}
                           >
-                            {removingId === checker.id
-                              ? "Removing..."
-                              : "Delete"}
+                            {removingId === checker.id ? "Removing..." : "Delete"}
                           </Button>
                         </td>
                       </tr>

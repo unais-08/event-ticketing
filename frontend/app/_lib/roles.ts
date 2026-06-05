@@ -8,7 +8,7 @@ export const ROLE_LABELS: Record<Role, string> = {
 };
 
 export const ROLE_HOME_PATHS: Record<Role, string> = {
-  ADMIN: "/admin/checkers",
+  ADMIN: "/admin/dashboard",
   ORGANIZER: "/organizer/dashboard",
   CHECKER: "/check-in",
   ATTENDEE: "/",

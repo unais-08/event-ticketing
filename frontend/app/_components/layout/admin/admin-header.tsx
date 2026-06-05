@@ -88,13 +88,7 @@ export default function AdminHeader() {
                         {mounted ? user?.name : ""}
                     </span>
 
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => router.push("/")}
-                    >
-                        Website
-                    </Button>
+                  
 
                     <Button
                         variant="ghost"
