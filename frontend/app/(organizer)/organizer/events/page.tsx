@@ -4,7 +4,6 @@ import React from "react";
 import Link from "next/link";
 
 import { deleteOrganizerEvent, getOrganizerEvents } from "@/app/_lib/api";
-
 import { getApiErrorMessage } from "@/app/_lib/errors";
 import { formatDate } from "@/app/_lib/format";
 import type { OrganizerEventListItem } from "@/app/_lib/types";
@@ -15,33 +14,28 @@ import { Button } from "@/app/_components/ui/button";
 import Pill from "@/app/_components/ui/pill";
 import RoleGuard from "@/app/_components/auth/role-guard";
 
-
-
-export default function OrganizerDashboardPage() {
+export default function OrganizerManageEventsPage() {
     const status = useAuthStore((state) => state.status);
 
     const [events, setEvents] = React.useState<OrganizerEventListItem[]>([]);
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
-
-    const [, setDeleting] = React.useState(false);
+    const [deletingId, setDeletingId] = React.useState<string | null>(null);
 
     async function handleDeleteEventById(eventId: string) {
         const confirmed = window.confirm("Delete this event and all related tickets?");
+        if (!confirmed) return;
 
-        if (!confirmed) {
-            return;
-        }
-
-        setDeleting(true);
-        setError("");
+        setDeletingId(eventId);
+        setError(null);
 
         try {
             await deleteOrganizerEvent(eventId);
             setEvents((prev) => prev.filter((e) => e.id !== eventId));
         } catch (deleteError) {
             setError(getApiErrorMessage(deleteError, "Unable to delete this event."));
-            setDeleting(false);
+        } finally {
+            setDeletingId(null);
         }
     }
 
@@ -54,131 +48,163 @@ export default function OrganizerDashboardPage() {
             try {
                 const res = await getOrganizerEvents({ page: 1, limit: 24 });
                 if (!mounted) return;
-
                 setEvents(res?.data?.events ?? []);
-                setError("");
+                setError(null);
             } catch (err) {
                 if (!mounted) return;
                 setError(getApiErrorMessage(err, "Failed to load events."));
             } finally {
-                if (!mounted) return;
-                setLoading(false);
+                if (mounted) setLoading(false);
             }
         };
 
         void loadEvents();
-
-        return () => {
-            mounted = false;
-        };
+        return () => { mounted = false; };
     }, [status]);
 
     if (status === "loading") {
         return (
-            <div className="mx-auto max-w-6xl px-6 py-8">
-                <Card className="h-72 animate-pulse bg-white/70" />
+            <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
+                <div className="h-72 animate-pulse rounded-2xl bg-gray-100" />
             </div>
         );
     }
 
     return (
         <RoleGuard allowedRoles={["ORGANIZER"]}>
-            <div className="mx-auto w-full max-w-6xl px-6 py-10">
-                <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-                    <div className="space-y-3">
-                        <div className="flex flex-wrap items-center gap-3">
-                            <Pill>Organizer events</Pill>
-                        </div>
-                        <h1 className="text-4xl font-semibold leading-tight text-[var(--color-ink)]">
-                            Manage your events, tickets, and capacity.
+            <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 py-8">
+
+                {/* ── Header ── */}
+                <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="space-y-1.5">
+                        <Pill>Organizer events</Pill>
+                        <h1 className="text-2xl sm:text-3xl font-semibold leading-tight text-[var(--color-ink)]">
+                            Manage your events
                         </h1>
-                        <p className="max-w-2xl text-base leading-7 text-[var(--color-ink-muted)]">
-                            Review your events at a glance and open any event to edit details or process QR check-ins.
+                        <p className="text-sm leading-relaxed text-[var(--color-ink-muted)] max-w-lg">
+                            Review events at a glance. Open any event to edit details or process check-ins.
                         </p>
                     </div>
 
-                    <div className="flex flex-wrap gap-3">
+                    <div className="flex gap-2 shrink-0">
                         <Link href="/organizer/events/new">
-                            <Button size="sm">Create event</Button>
+                            <Button size="sm">+ Create</Button>
                         </Link>
                         <Link href="/organizer/check-in">
-                            <Button variant="outline" size="sm">
-                                Open check-in
-                            </Button>
+                            <Button variant="outline" size="sm">Check-in</Button>
                         </Link>
                     </div>
                 </div>
 
-                {error ? (
-                    <Card className="mb-6 border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</Card>
-                ) : null}
+                {/* ── Error ── */}
+                {error && (
+                    <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                        {error}
+                    </div>
+                )}
 
+                {/* ── Loading skeleton ── */}
                 {loading ? (
-                    <Card className="h-64 animate-pulse bg-white/70" />
+                    <div className="grid gap-3 sm:grid-cols-2">
+                        {[...Array(4)].map((_, i) => (
+                            <div key={i} className="h-44 animate-pulse rounded-2xl bg-gray-100" />
+                        ))}
+                    </div>
                 ) : events.length === 0 ? (
-                    <Card className="flex flex-col items-start justify-between gap-4 p-6">
-                        <div className="space-y-2">
+
+                    /* ── Empty state ── */
+                    <Card className="flex flex-col items-start gap-4 p-6">
+                        <div className="space-y-1.5">
                             <Pill>No events yet</Pill>
-                            <h2 className="text-2xl font-semibold text-[var(--color-ink)]">Create your first event</h2>
-                            <p className="text-sm text-[var(--color-ink-muted)]">Once created, your events will appear here.</p>
+                            <h2 className="text-xl font-semibold text-[var(--color-ink)]">Create your first event</h2>
+                            <p className="text-sm text-[var(--color-ink-muted)]">
+                                Once created, your events will appear here.
+                            </p>
                         </div>
                         <Link href="/organizer/events/new">
                             <Button>Create event</Button>
                         </Link>
                     </Card>
+
                 ) : (
-                    <div className="grid gap-4 md:grid-cols-2">
-                        {events.map((event) => (
-                            <Card key={event.id} className="flex flex-col gap-4 p-5">
-                                <div className="flex items-start justify-between gap-3">
-                                    <div className="min-w-0">
 
-                                        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[var(--color-ink-muted)]">Event</p>
-                                        <h2 className="mt-2 truncate text-xl font-semibold text-[var(--color-ink)]">{event.title}</h2>
-                                        <p className="mt-1 line-clamp-2 text-sm text-[var(--color-ink-muted)]">{event.description}</p>
-                                    </div>
-                                    <Pill>{formatDate(event.date)}</Pill>
-                                </div>
+                    /* ── Event grid ── */
+                    <div className="grid gap-3 sm:grid-cols-2">
+                        {events.map((event) => {
+                            const fillPct = event.capacity > 0
+                                ? Math.round((event.ticketCount / event.capacity) * 100)
+                                : 0;
 
-                                <div className="grid gap-2 text-sm text-[var(--color-ink-muted)]">
-                                    <div className="flex items-center justify-between gap-3">
-                                        <span>Location</span>
-                                        <span className="font-semibold text-[var(--color-ink)]">{event.location}</span>
-                                    </div>
-                                    <div className="flex items-center justify-between gap-3">
-                                        <span>Tickets</span>
-                                        <span className="font-semibold text-[var(--color-ink)]">{event.ticketCount}</span>
-                                    </div>
-                                    <div className="flex items-center justify-between gap-3">
-                                        <span>Capacity</span>
-                                        <span className="font-semibold text-[var(--color-ink)]">{event.capacity}</span>
-                                    </div>
-                                </div>
+                            return (
+                                <Card key={event.id} className="flex flex-col gap-3 p-4 sm:p-5">
 
-                                <div className="flex flex-wrap items-center gap-3 justify-end">
-                                    <Link href={`/organizer/events/${event.id}`}>
-                                        <Button size="sm">Open event</Button>
-                                    </Link>
+                                    {/* Title row */}
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="min-w-0">
+                                            <h2 className="truncate text-base font-semibold text-[var(--color-ink)]">
+                                                {event.title}
+                                            </h2>
+                                            <p className="mt-0.5 line-clamp-2 text-xs text-[var(--color-ink-muted)] leading-relaxed">
+                                                {event.description}
+                                            </p>
+                                        </div>
+                                        <Pill className="shrink-0 text-xs">{formatDate(event.date)}</Pill>
+                                    </div>
 
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="text-red-600 hover:text-red-700"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            void handleDeleteEventById(event.id);
-                                        }}
-                                    >
-                                        Delete
-                                    </Button>
-                                </div>
-                            </Card>
-                        ))}
+                                    {/* Meta rows */}
+                                    <div className="divide-y divide-[var(--color-border,#e5e5e3)] text-sm">
+                                        <div className="flex items-center justify-between gap-2 py-1.5">
+                                            <span className="text-[var(--color-ink-muted)]">Location</span>
+                                            <span className="font-medium text-[var(--color-ink)] text-right truncate max-w-[60%]">
+                                                {event.location}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center justify-between gap-2 py-1.5">
+                                            <span className="text-[var(--color-ink-muted)]">Tickets</span>
+                                            <span className="font-medium text-[var(--color-ink)]">
+                                                {event.ticketCount} / {event.capacity}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Fill rate bar */}
+                                    <div>
+                                        <div className="h-1 rounded-full bg-[var(--color-border,#e5e5e3)] overflow-hidden">
+                                            <div
+                                                className="h-full rounded-full bg-blue-500 transition-all duration-500"
+                                                style={{ width: `${Math.min(fillPct, 100)}%` }}
+                                            />
+                                        </div>
+                                        <p className="mt-1 text-[11px] text-[var(--color-ink-muted)]">
+                                            {fillPct}% filled
+                                        </p>
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div className="flex items-center gap-2 pt-1">
+                                        <Link href={`/organizer/events/${event.id}`} className="flex-1">
+                                            <Button size="sm" className="w-full">Detail Info</Button>
+                                        </Link>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            disabled={deletingId === event.id}
+                                            className="border-red-200 text-red-600 hover:bg-red-50"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                void handleDeleteEventById(event.id);
+                                            }}
+                                        >
+                                            {deletingId === event.id ? "…" : "Delete"}
+                                        </Button>
+                                    </div>
+                                </Card>
+                            );
+                        })}
                     </div>
                 )}
             </div>
         </RoleGuard>
     );
 }
-
