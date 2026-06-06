@@ -53,7 +53,7 @@ export default function NewEventPage() {
       const res = await createOrganizerEvent(payload);
       const eventId = res.data?.id;
       if (eventId) {
-        router.push(`/organizer/events/${eventId}`);
+        router.push(`/organizer/events`);
       } else {
         router.push(`/organizer/dashboard`);
       }

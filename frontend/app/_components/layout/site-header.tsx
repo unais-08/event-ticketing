@@ -210,15 +210,7 @@ export default function SiteHeader() {
                 </>
               )}
 
-              {mounted && user?.role === "ADMIN" && (
-                <Link
-                  href="/admin/checkers"
-                  onClick={closeMobileMenu}
-                  className="rounded-xl px-3 py-3 text-sm font-semibold transition hover:bg-[var(--color-surface)]"
-                >
-                  Admin
-                </Link>
-              )}
+
             </nav>
 
             <div className="mt-4 border-t border-[var(--color-border)] pt-4">

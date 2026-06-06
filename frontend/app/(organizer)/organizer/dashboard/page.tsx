@@ -89,14 +89,16 @@ export default function OrganizerDashboardPage() {
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link href="/organizer/events/new">
-                <Button size="sm">Create event</Button>
-              </Link>
-              <Link href="/organizer/check-in">
-                <Button variant="outline" size="sm">
-                  Open check-in
+
+              <Link href="/organizer/events">
+                <Button variant="primary" size="sm">
+                  Manage Events
                 </Button>
               </Link>
+              <Link href="/organizer/events/new">
+                <Button  variant="outline" size="sm">Create event</Button>
+              </Link>
+
             </div>
           </Card>
 
