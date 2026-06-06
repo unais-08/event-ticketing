@@ -1,7 +1,7 @@
 export const SAMPLE_CREDENTIALS = [
   {
-    role: "Admin",
-    email: "admin@example.com",
+    role: "Attendee",
+    email: "user@example.com",
     password: "Pass@123",
   },
   {
@@ -15,8 +15,8 @@ export const SAMPLE_CREDENTIALS = [
     password: "Pass@123",
   },
   {
-    role: "Attendee",
-    email: "user@example.com",
+    role: "Admin",
+    email: "admin@example.com",
     password: "Pass@123",
   },
 ];

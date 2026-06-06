@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { loginUser, getMe } from "@/app/_lib/api";
 import { getApiErrorMessage } from "@/app/_lib/errors";
 import Input from "@/app/_components/ui/input";
@@ -68,61 +69,79 @@ export default function LoginContent() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-md px-6 py-16">
-      <h1 className="mb-6 text-2xl font-semibold">
-        Log in
-      </h1>
+    <div className="flex min-h-screen items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md">
 
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <Label>Email</Label>
-          <Input
-            type="email"
-            required
-            value={form.email}
-            onChange={(e) =>
-              setForm((prev) => ({
-                ...prev,
-                email: e.target.value,
-              }))
-            }
-          />
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-semibold">Log in</h1>
+          <p className="mt-1 text-sm text-[var(--color-ink-muted)]">
+            Welcome back. Enter your credentials to continue.
+          </p>
         </div>
 
-        <div>
-          <Label>Password</Label>
-          <Input
-            type="password"
-            required
-            value={form.password}
-            onChange={(e) =>
-              setForm((prev) => ({
-                ...prev,
-                password: e.target.value,
-              }))
-            }
-          />
-        </div>
-
-        {error && (
-          <div className="text-sm text-red-600">
-            {error}
+        {/* Form — untouched */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label>Email</Label>
+            <Input
+              type="email"
+              required
+              value={form.email}
+              onChange={(e) =>
+                setForm((prev) => ({
+                  ...prev,
+                  email: e.target.value,
+                }))
+              }
+            />
           </div>
-        )}
 
-        <div className="flex items-center gap-3">
-          <Button
-            type="submit"
-            disabled={loading}
+          <div>
+            <Label>Password</Label>
+            <Input
+              type="password"
+              required
+              value={form.password}
+              onChange={(e) =>
+                setForm((prev) => ({
+                  ...prev,
+                  password: e.target.value,
+                }))
+              }
+            />
+          </div>
+
+          {error && (
+            <div className="text-sm text-red-600">
+              {error}
+            </div>
+          )}
+
+          <div className="flex items-center gap-3">
+            <Button type="submit" disabled={loading} className="w-full sm:w-auto">
+              {loading ? "Signing in..." : "Sign in"}
+            </Button>
+          </div>
+        </form>
+
+        {/* Sign up link */}
+        <p className="mt-6 text-sm text-[var(--color-ink-muted)]">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/register"
+            className="font-medium text-[var(--color-ink)] underline underline-offset-4 hover:opacity-70 transition-opacity"
           >
-            {loading ? "Signing in..." : "Sign in"}
-          </Button>
-        </div>
-      </form>
-      {/* sample credentials */}
-      <SampleCredentials />
+            Sign up
+          </Link>
+        </p>
 
+        {/* Sample credentials */}
+        <div className="mt-6">
+          <SampleCredentials />
+        </div>
+
+      </div>
     </div>
   );
 }

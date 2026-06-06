@@ -10,6 +10,7 @@ import Label from "@/app/_components/ui/label";
 import { Button } from "@/app/_components/ui/button";
 import { useAuthStore } from "@/app/_stores/auth-store";
 import { getRoleHomePath } from "@/app/_lib/roles";
+import Link from "next/link";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -60,11 +61,25 @@ export default function RegisterPage() {
         </div>
         {error && <div className="text-sm text-red-600">{error}</div>}
         <div className="flex items-center gap-3">
-          <Button disabled={loading} type="submit">
+          {/* <Button disabled={loading} type="submit">
             {loading ? "Creating…" : "Create account"}
-          </Button>
+          </Button> */}
+            <Button type="submit" disabled={loading} className="w-full sm:w-auto">
+              {loading ? "Creating..." : "Create Account"}
+            </Button>
+          
         </div>
       </form>
+      {/* login up link */}
+      <p className="mt-6 text-sm text-[var(--color-ink-muted)]">
+        Already have an account?{" "}
+        <Link
+          href="/login"
+          className="font-medium text-[var(--color-ink)] underline underline-offset-4 hover:opacity-70 transition-opacity"
+        >
+          Sign In
+        </Link>
+      </p>
     </div>
   );
 }
