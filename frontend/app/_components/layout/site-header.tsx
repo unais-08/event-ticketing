@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import { useSyncExternalStore } from "react";
 
 import { useAuthStore } from "@/app/_stores/auth-store";
 import { buttonStyles } from "@/app/_components/ui/button";
@@ -19,13 +20,13 @@ export default function SiteHeader() {
 
   const user = useAuthStore((state) => state.user);
   const clearSession = useAuthStore((state) => state.clearSession);
-
-  const [mounted, setMounted] = React.useState(false);
+  const mounted = useSyncExternalStore(
+    () => () => { },          // subscribe (noop)
+    () => true,              // getSnapshot (client)
+    () => false              // getServerSnapshot (SSR)
+  );
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const handleSignOut = () => {
     clearSession();
@@ -72,23 +73,7 @@ export default function SiteHeader() {
             </Link>
           )}
 
-          {mounted && user && isOperationalRole(user.role) && (
-            <>
-              <Link
-                className="transition hover:text-[var(--color-ink)]"
-                href={getRoleHomePath(user.role)}
-              >
-                Workspace
-              </Link>
 
-              <Link
-                className="transition hover:text-[var(--color-ink)]"
-                href="/organizer/check-in"
-              >
-                Check-in
-              </Link>
-            </>
-          )}
 
           {mounted && user?.role === "ADMIN" && (
             <Link

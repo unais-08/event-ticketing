@@ -77,7 +77,7 @@ export interface OrganizerEventListItem {
   updatedAt?: string | null;
 }
 
-export interface OrganizerEventDetails extends OrganizerEventListItem {}
+export type OrganizerEventDetails = OrganizerEventListItem;
 
 export interface OrganizerEventFormInput {
   title: string;

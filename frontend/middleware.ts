@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const ROLE_HOME: Record<string, string> = {
-  ADMIN: "/admin/dashboard",
-  ORGANIZER: "/organizer/dashboard",
-};
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -23,6 +19,9 @@ export function middleware(request: NextRequest) {
 
   const isOrganizerRoute =
     pathname === "/organizer" || pathname.startsWith("/organizer/");
+
+  const isCheckerRoute =
+    pathname === "/checker" || pathname.startsWith("/checker/");
 
   // ADMIN can only access /admin/*
   if (role === "ADMIN") {
@@ -46,12 +45,24 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Normal users cannot access admin or organizer routes
-  if (isAdminRoute || isOrganizerRoute) {
+  // CHECKER can only access /checker/*
+  if (role === "CHECKER") {
+    if (!isCheckerRoute) {
+      return NextResponse.redirect(
+        new URL("/checker/check-in", request.url)
+      );
+    }
+
+    return NextResponse.next();
+  }
+
+  // Normal users cannot access admin/organizer/checker routes
+  if (isAdminRoute || isOrganizerRoute || isCheckerRoute) {
     return NextResponse.redirect(
       new URL("/", request.url)
     );
   }
+
 
   return NextResponse.next();
 }

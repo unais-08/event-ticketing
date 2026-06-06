@@ -14,7 +14,7 @@ export default function NotFound() {
         </h1>
 
         <p className="mb-8 text-lg text-[var(--color-ink-muted)]">
-          The page you're looking for doesn't exist or may have been moved.
+          The page you are looking for does not exist or may have been moved.
         </p>
 
         <div className="flex justify-center gap-4">

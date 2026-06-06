@@ -1,22 +1,23 @@
 
 "use client";
 
+import { useSyncExternalStore } from "react";
 import EventsSection from "@/app/_components/marketing/events-section";
 import FeatureStrip from "@/app/_components/marketing/feature-strip";
 import Hero from "@/app/_components/marketing/hero";
 import RoleWorkspace from "@/app/_components/dashboard/role-workspace";
 import Card from "@/app/_components/ui/card";
 import { useAuthStore } from "@/app/_stores/auth-store";
-import { useEffect, useState } from "react";
 
 export default function Home() {
   const user = useAuthStore((state) => state.user);
   const status = useAuthStore((state) => state.status);
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(
+    () => () => { },          // subscribe (noop)
+    () => true,              // getSnapshot (client)
+    () => false              // getServerSnapshot (SSR)
+  );
 
   if (mounted && status === "loading") {
     return (

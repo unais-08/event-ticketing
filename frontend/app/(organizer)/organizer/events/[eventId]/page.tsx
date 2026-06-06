@@ -65,20 +65,18 @@ export default function OrganizerEventPage() {
   const canAccess = isOrganizerRole(user?.role ?? null);
 
   React.useEffect(() => {
-    if (!eventId || !canAccess) {
-      setLoading(false);
-      return;
-    }
+    if (!eventId || !canAccess) return; // ← no setState, just bail
 
     let mounted = true;
 
     const loadData = async () => {
       try {
-        const [eventRes, ticketsRes] = await Promise.all([getOrganizerEvent(eventId), getOrganizerEventTickets(eventId)]);
+        const [eventRes, ticketsRes] = await Promise.all([
+          getOrganizerEvent(eventId),
+          getOrganizerEventTickets(eventId),
+        ]);
 
-        if (!mounted) {
-          return;
-        }
+        if (!mounted) return;
 
         const loadedEvent = eventRes.data ?? null;
         setEvent(loadedEvent);
@@ -95,21 +93,14 @@ export default function OrganizerEventPage() {
 
         setTickets(ticketsRes.data ?? []);
       } catch (loadError) {
-        if (mounted) {
-          setError(getApiErrorMessage(loadError, "Unable to load event details."));
-        }
+        if (mounted) setError(getApiErrorMessage(loadError, "Unable to load event details."));
       } finally {
-        if (mounted) {
-          setLoading(false);
-        }
+        if (mounted) setLoading(false);
       }
     };
 
     void loadData();
-
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, [canAccess, eventId]);
 
   async function refreshTickets() {

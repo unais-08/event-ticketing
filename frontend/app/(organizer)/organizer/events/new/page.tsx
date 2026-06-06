@@ -27,15 +27,6 @@ export default function NewEventPage() {
 
   const canAccess = user?.role === "ADMIN" || user?.role === "ORGANIZER";
 
-  React.useEffect(() => {
-    if (status === "loading") {
-      return;
-    }
-
-    if (!canAccess) {
-      setSubmitting(false);
-    }
-  }, [canAccess, status]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -57,7 +48,7 @@ export default function NewEventPage() {
       } else {
         router.push(`/organizer/dashboard`);
       }
-    } catch (err: any) {
+    } catch (err) {
       setError(getApiErrorMessage(err, "Unable to create event."));
     } finally {
       setSubmitting(false);

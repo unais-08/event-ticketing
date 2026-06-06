@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -11,10 +11,13 @@ import { Menu } from "lucide-react";
 
 export default function AdminHeader() {
     const router = useRouter();
-    const [mounted, setMounted] = React.useState(false);
-    React.useEffect(() => {
-        setMounted(true);
-    }, []);
+
+    const mounted = useSyncExternalStore(
+        () => () => { },          // subscribe (noop)
+        () => true,              // getSnapshot (client)
+        () => false              // getServerSnapshot (SSR)
+    );
+
     const user = useAuthStore((state) => state.user);
     const clearSession = useAuthStore((state) => state.clearSession);
 
@@ -88,7 +91,7 @@ export default function AdminHeader() {
                         {mounted ? user?.name : ""}
                     </span>
 
-                  
+
 
                     <Button
                         variant="ghost"

@@ -7,14 +7,14 @@ export default function AdminEventsManagementPage() {
                 </div>
 
                 <h1 className="mb-4 text-5xl font-bold">
-                    We're working on it!
+                    We are working on it!
                 </h1>
 
                 <p className="mb-8 text-lg text-[var(--color-ink-muted)]">
-                    The page you're looking for is in development.
+                    The page you are looking for is in development.
                 </p>
 
-                
+
             </div>
         </main>
     );

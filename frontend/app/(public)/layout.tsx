@@ -1,4 +1,3 @@
-import SiteHeader from "@/app/_components/layout/site-header";
 import SiteFooter from "@/app/_components/layout/site-footer";
 
 export default function PublicLayout({

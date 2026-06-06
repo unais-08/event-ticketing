@@ -22,42 +22,28 @@ export default function OrganizerDashboardPage() {
   const [error, setError] = React.useState("");
 
   React.useEffect(() => {
-    if (status === "loading") {
-      return;
-    }
+    if (status === "loading") return;
 
     const canAccess = user?.role === "ADMIN" || user?.role === "ORGANIZER";
-
-    if (!canAccess) {
-      setLoading(false);
-      return;
-    }
+    if (!canAccess) return; // ← no setState, just bail out
 
     let mounted = true;
 
     const loadEvents = async () => {
+      if (mounted) setLoading(true); // ← loading reset lives inside async fn
       try {
         const res = await getOrganizerEvents({ page: 1, limit: 24 });
-
         if (!mounted) return;
-
         setEvents(res?.data?.events ?? []);
-      } catch (err: any) {
-        if (mounted) {
-          setError(getApiErrorMessage(err, "Failed to load events."));
-        }
+      } catch (err) { // ← removed `: any`
+        if (mounted) setError(getApiErrorMessage(err, "Failed to load events."));
       } finally {
-        if (mounted) {
-          setLoading(false);
-        }
+        if (mounted) setLoading(false);
       }
     };
 
-    loadEvents();
-
-    return () => {
-      mounted = false;
-    };
+    void loadEvents();
+    return () => { mounted = false; };
   }, [status, user]);
 
   if (status === "loading") {
@@ -96,7 +82,7 @@ export default function OrganizerDashboardPage() {
                 </Button>
               </Link>
               <Link href="/organizer/events/new">
-                <Button  variant="outline" size="sm">Create event</Button>
+                <Button variant="outline" size="sm">Create event</Button>
               </Link>
 
             </div>

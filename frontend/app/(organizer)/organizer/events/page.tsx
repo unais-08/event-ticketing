@@ -24,7 +24,7 @@ export default function OrganizerDashboardPage() {
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
 
-    const [deleting, setDeleting] = React.useState(false);
+    const [, setDeleting] = React.useState(false);
 
     async function handleDeleteEventById(eventId: string) {
         const confirmed = window.confirm("Delete this event and all related tickets?");

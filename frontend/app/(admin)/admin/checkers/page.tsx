@@ -19,40 +19,36 @@ export default function AdminCheckersPage() {
   const [removingId, setRemovingId] = React.useState<string | null>(null);
   const [error, setError] = React.useState("");
   const [message, setMessage] = React.useState("");
+  const [fetchTick, setFetchTick] = React.useState(0); // ← refresh trigger
 
-  // Only evaluate canAccess once auth has resolved to avoid SSR/client mismatch
   const canAccess = status !== "loading" && user?.role === "ADMIN";
 
-  const loadCheckers = React.useCallback(async () => {
-    if (!canAccess) {
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const response = await getAdminUsers({ page: 1, limit: 100, role: "CHECKER" });
-      setCheckers(response.data?.users ?? []);
-    } catch (err) {
-      setError(getApiErrorMessage(err, "Unable to load checkers."));
-    } finally {
-      setLoading(false);
-    }
-  }, [canAccess]);
-
   React.useEffect(() => {
-    if (status === "loading") {
-      return;
+    if (status === "loading" || !canAccess) return;
+
+    let cancelled = false;
+
+    async function run() {
+      if (!cancelled) setLoading(true); // ← moved inside run()
+      try {
+        const response = await getAdminUsers({ page: 1, limit: 100, role: "CHECKER" });
+        if (!cancelled) setCheckers(response.data?.users ?? []);
+      } catch (err) {
+        if (!cancelled) setError(getApiErrorMessage(err, "Unable to load checkers."));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }
 
-    void loadCheckers();
-  }, [loadCheckers, status]);
+    void run();
+    return () => { cancelled = true; };
+  }, [canAccess, status, fetchTick]);
+
+
+  const refresh = () => setFetchTick((t) => t + 1); // ← replaces loadCheckers()
 
   const handleRemove = async (checkerId: string) => {
-    const confirm = window.confirm("Delete this checker account?");
-
-    if (!confirm) {
-      return;
-    }
+    if (!window.confirm("Delete this checker account?")) return;
 
     setRemovingId(checkerId);
     setError("");
@@ -61,7 +57,7 @@ export default function AdminCheckersPage() {
     try {
       await deleteCheckerAccount(checkerId);
       setMessage("Checker account deleted.");
-      await loadCheckers();
+      refresh(); // ← triggers the effect
     } catch (err) {
       setError(getApiErrorMessage(err, "Unable to delete checker account."));
     } finally {
@@ -180,7 +176,7 @@ export default function AdminCheckersPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => void loadCheckers()}
+              onClick={refresh}
               className="w-full sm:w-auto"
             >
               Refresh

@@ -10,6 +10,7 @@ import { Button } from "@/app/_components/ui/button";
 import { useAuthStore } from "@/app/_stores/auth-store";
 import { getRoleHomePath } from "@/app/_lib/roles";
 import { Role } from "../../_lib/types";
+import SampleCredentials from "@/app/_components/auth/sample-credentials";
 
 export default function LoginContent() {
   const router = useRouter();
@@ -58,7 +59,7 @@ export default function LoginContent() {
         role = me.data.user.role;
       }
 
-      router.push(next || getRoleHomePath(role as Role ));
+      router.push(next || getRoleHomePath(role as Role));
     } catch (err) {
       setError(getApiErrorMessage(err, "Unable to log in."));
     } finally {
@@ -71,6 +72,7 @@ export default function LoginContent() {
       <h1 className="mb-6 text-2xl font-semibold">
         Log in
       </h1>
+
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -118,6 +120,9 @@ export default function LoginContent() {
           </Button>
         </div>
       </form>
+      {/* sample credentials */}
+      <SampleCredentials />
+
     </div>
   );
 }

@@ -12,9 +12,9 @@ import type {
 } from "@/app/_lib/types";
 
 import Card from "@/app/_components/ui/card";
-import { Button, buttonStyles } from "@/app/_components/ui/button";
-import { useAuthStore } from "../_stores/auth-store";
-import ProtectedRoute from "../_components/auth/protected-route";
+import { buttonStyles } from "@/app/_components/ui/button";
+
+import ProtectedRoute from "../../_components/auth/protected-route";
 
 export default function TicketsPage() {
   const [tickets, setTickets] = useState<TicketListItem[]>([]);
@@ -68,7 +68,7 @@ export default function TicketsPage() {
     };
   }, [page]);
 
- 
+
   return (
     <ProtectedRoute>
       <div className="mx-auto max-w-6xl px-6 py-12">

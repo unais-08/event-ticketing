@@ -1,11 +1,6 @@
 import AdminHeader from "@/app/_components/layout/admin/admin-header";
 import AdminSidebar from "@/app/_components/layout/admin/admin-sidebar";
 
-const metadata = {
-  title: "Admin Panel",
-  description: "Manage users, events, and system settings in the admin panel.",
-};
-
 export default function AdminLayout({
   children,
 }: {

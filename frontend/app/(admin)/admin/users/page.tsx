@@ -22,28 +22,36 @@ export default function AdminUsersPage() {
   const [page, setPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(1);
   const [totalUsers, setTotalUsers] = React.useState(0);
+  const [fetchTick, setFetchTick] = React.useState(0);
 
   const canAccess = user?.role === "ADMIN";
-
-  const loadUsers = React.useCallback(async (p = page) => {
-    if (!canAccess) { setLoading(false); return; }
-    try {
-      setLoading(true);
-      const response = await getAdminUsers({ page: p, limit: LIMIT, role: "ATTENDEE" });
-      setUsers(response.data?.users ?? []);
-      setTotalPages(response.data?.meta?.totalPages ?? 1);
-      setTotalUsers(response.data?.meta?.total ?? 0);
-    } catch (err) {
-      setError(getApiErrorMessage(err, "Unable to load users."));
-    } finally {
-      setLoading(false);
-    }
-  }, [canAccess, page]);
+  const refresh = () => setFetchTick((t) => t + 1);
 
   React.useEffect(() => {
-    if (status === "loading") return;
-    void loadUsers(page);
-  }, [status, page]);
+    if (status === "loading" || !canAccess) return;
+
+    let cancelled = false;
+
+    async function run() {
+      if (!cancelled) setLoading(true); // ← moved inside run()
+      try {
+        const response = await getAdminUsers({ page, limit: LIMIT, role: "ATTENDEE" });
+        if (!cancelled) {
+          setUsers(response.data?.users ?? []);
+          setTotalPages(response.data?.meta?.totalPages ?? 1);
+          setTotalUsers(response.data?.meta?.total ?? 0);
+        }
+      } catch (err) {
+        if (!cancelled) setError(getApiErrorMessage(err, "Unable to load users."));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    void run();
+    return () => { cancelled = true; };
+  }, [canAccess, status, page, fetchTick]);
+
 
   const handleDelete = async (u: AdminUserListItem) => {
     if (!window.confirm(`Delete ${u.name}?`)) return;
@@ -107,7 +115,7 @@ export default function AdminUsersPage() {
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--color-ink-muted)]">Attendee Directory</p>
             <h2 className="mt-2 text-xl font-semibold text-[var(--color-ink)] sm:text-2xl">{users.length} Attendees</h2>
           </div>
-          <Button variant="outline" size="sm" onClick={() => void loadUsers(page)} className="w-full sm:w-auto">
+          <Button variant="outline" size="sm" onClick={refresh} className="w-full sm:w-auto">
             Refresh
           </Button>
         </div>

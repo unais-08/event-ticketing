@@ -12,7 +12,8 @@ export default function LayoutWrapper({
 
     const hidePublicHeader =
         pathname.startsWith("/admin") ||
-        pathname.startsWith("/organizer")
+        pathname.startsWith("/organizer")||
+        pathname.startsWith("/checker");
     return (
         <>
             {!hidePublicHeader && <SiteHeader />}

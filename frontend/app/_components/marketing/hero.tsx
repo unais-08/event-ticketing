@@ -55,7 +55,7 @@ export default function Hero() {
             </div>
           </div>
           <div className="mt-4 rounded-2xl border border-[var(--color-border)] bg-white/80 p-4 text-sm text-[var(--color-ink-muted)] shadow-[var(--shadow-soft)] animate-[float-slow_8s_ease-in-out_infinite]">
-            "Check-in just flows. No stress, no bottlenecks." - Venue lead
+            Check-in just flows. No stress, no bottlenecks.- Venue lead
           </div>
         </div>
       </div>

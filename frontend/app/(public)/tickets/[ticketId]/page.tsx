@@ -7,6 +7,7 @@ import { getTicketQr } from "@/app/_lib/api";
 import { getApiErrorMessage } from "@/app/_lib/errors";
 
 import Card from "@/app/_components/ui/card";
+import Image from "next/image";
 
 type TicketQrResponse = {
   token: string;
@@ -80,7 +81,7 @@ export default function TicketPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-12">
+    <div className="mx-auto max-w-3xl px-6 py-8">
       <Card className="overflow-hidden">
         <div className="text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-ink-muted)]">
@@ -91,17 +92,17 @@ export default function TicketPage() {
             Event Access Pass
           </h1>
 
-          <p className="mt-3 text-[var(--color-ink-muted)]">
-            Present this QR code during check-in.
-          </p>
         </div>
 
-        <div className="mt-10 flex justify-center">
-          <div className="rounded-3xl bg-white p-6 shadow-lg">
-            <img
+        <div className="mt-0 flex justify-center">
+          <div className="rounded-3xl bg-white p-4 shadow-lg">
+            <Image
               src={ticket.dataUrl}
               alt="Ticket QR Code"
-              className="h-72 w-72"
+              width={250}
+              height={250}
+              className="h-60 w-60"
+              unoptimized
             />
           </div>
         </div>
