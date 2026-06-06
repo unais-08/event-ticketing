@@ -168,7 +168,7 @@ export default function OrganizerDashboardPage() {
                       </div>
                       <div>
                         <h3 className="text-2xl font-semibold text-[var(--color-ink)]">{event.title}</h3>
-                        <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--color-ink-muted)]">{event.description}</p>
+                        {/* <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--color-ink-muted)]">{event.description}</p> */}
                       </div>
                     </div>
 
