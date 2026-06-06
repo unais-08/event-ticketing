@@ -13,10 +13,23 @@ const app: Express = express();
 app.use(attachRequestId);
 app.use(httpLogger);
 app.use(express.json());
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [
+  "http://localhost:3000"
+];
+
 app.use(cors({
-  origin:"http://localhost:3000",
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 }));
+
 app.use("/api/auth", authRoutes);
 app.use("/api/admin/users", adminUsersRoutes);
 app.use("/api/organizers", organizersRoutes);
@@ -29,7 +42,7 @@ app.get("/", (_req: Request, res: Response) => {
 
 app.get("/api/health", async (req: Request, res: Response) => {
   try {
-    const cnt=await Promise.all([prisma.user.count()]);
+    const cnt = await Promise.all([prisma.user.count()]);
 
     res.json({
       status: "ok",
