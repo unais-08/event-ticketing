@@ -76,11 +76,9 @@ export default function RoleWorkspace({ user }: { user: User }) {
               <p className="max-w-2xl text-base leading-7 text-[var(--color-ink-muted)] md:text-lg">{copy.description}</p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link className={buttonStyles({ size: "lg" })} href={homePath}>
-                Open workspace
-              </Link>
-              <Link className={buttonStyles({ variant: "outline", size: "lg" })} href={copy.actions[0].href}>
-                {copy.actions[0].label}
+              
+              <Link className={buttonStyles({ size: "lg" })} href="/events">
+                Browse Events
               </Link>
             </div>
           </div>
