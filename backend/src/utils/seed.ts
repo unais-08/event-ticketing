@@ -42,7 +42,7 @@ async function main() {
   await prisma.event.deleteMany();
   await prisma.user.deleteMany();
 
-  const password = "Password123!";
+  const password = "Pass@123"; // common password for all seeded users (hashed in createUser)
 
   // Admin
   const admin = await createUser("Admin User", "admin@example.com", password, Role.ADMIN);
