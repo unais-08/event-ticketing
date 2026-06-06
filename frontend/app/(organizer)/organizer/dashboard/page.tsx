@@ -162,7 +162,7 @@ export default function OrganizerDashboardPage() {
                       <Link href={`/organizer/events/${event.id}`}>
                         <Button size="sm">Open event</Button>
                       </Link>
-                      <Link href={`/organizer/events/${event.id}`}>
+                      <Link href={`/organizer/events/edit/${event.id}`}>
                         <Button variant="outline" size="sm">
                           Edit
                         </Button>
