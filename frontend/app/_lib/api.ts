@@ -57,6 +57,14 @@ export async function getTicketQr(ticketId: string) {
   return response.data;
 }
 
+
+export async function getUserTicket(ticketId: string) {
+  const response = await apiClient.get<ApiResponse<{ id: string; eventId: string; qrCode: string; checkedIn: boolean }>>(
+    `/attendees/tickets/${ticketId}`
+  );
+  return response.data;
+}
+
 // Organizer APIs
 export async function getOrganizerEvents(params?: { page?: number; limit?: number }) {
   const response = await apiClient.get<
