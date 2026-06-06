@@ -123,84 +123,10 @@ export default function AdminDashboardPage() {
                         </Card>
                     </Link>
 
-                    <Link href="/admin/tickets">
-                        <Card className="transition hover:-translate-y-1 hover:shadow-lg">
-                            <h3 className="font-semibold">Tickets</h3>
 
-                            <p className="mt-2 text-sm text-[var(--color-ink-muted)]">
-                                Review ticket purchases and attendance.
-                            </p>
-                        </Card>
-                    </Link>
                 </div>
             </section>
 
-            {/* Recent Activity */}
-            <section>
-                <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-[var(--color-ink)]">
-                        Recent Activity
-                    </h2>
-
-                    <Link href="/admin/activity">
-                        <Button variant="outline" size="sm">
-                            View All
-                        </Button>
-                    </Link>
-                </div>
-
-                <Card>
-                    <div className="space-y-4">
-                        <div className="flex items-start justify-between gap-4 border-b border-[var(--color-border)] pb-4">
-                            <div>
-                                <p className="font-medium">
-                                    New organizer account approved
-                                </p>
-
-                                <p className="text-sm text-[var(--color-ink-muted)]">
-                                    Tech Events Inc.
-                                </p>
-                            </div>
-
-                            <span className="text-xs text-[var(--color-ink-muted)]">
-                                5 mins ago
-                            </span>
-                        </div>
-
-                        <div className="flex items-start justify-between gap-4 border-b border-[var(--color-border)] pb-4">
-                            <div>
-                                <p className="font-medium">
-                                    Event published
-                                </p>
-
-                                <p className="text-sm text-[var(--color-ink-muted)]">
-                                    React Mumbai Meetup
-                                </p>
-                            </div>
-
-                            <span className="text-xs text-[var(--color-ink-muted)]">
-                                20 mins ago
-                            </span>
-                        </div>
-
-                        <div className="flex items-start justify-between gap-4">
-                            <div>
-                                <p className="font-medium">
-                                    Ticket purchase completed
-                                </p>
-
-                                <p className="text-sm text-[var(--color-ink-muted)]">
-                                    3 tickets purchased
-                                </p>
-                            </div>
-
-                            <span className="text-xs text-[var(--color-ink-muted)]">
-                                45 mins ago
-                            </span>
-                        </div>
-                    </div>
-                </Card>
-            </section>
 
             {/* System Overview */}
             <section>
@@ -221,17 +147,6 @@ export default function AdminDashboardPage() {
                         </p>
                     </Card>
 
-                    <Card>
-                        <h3 className="font-semibold">Most Active Organizer</h3>
-
-                        <p className="mt-4 text-2xl font-bold">
-                            Dev Community India
-                        </p>
-
-                        <p className="mt-2 text-sm text-[var(--color-ink-muted)]">
-                            8 active events
-                        </p>
-                    </Card>
                 </div>
             </section>
         </div>

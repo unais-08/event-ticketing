@@ -26,7 +26,7 @@ const sections = [
         title: "User Management",
         items: [
             {
-                label: "Users",
+                label: "Attendees",
                 href: "/admin/users",
                 icon: Users,
             },

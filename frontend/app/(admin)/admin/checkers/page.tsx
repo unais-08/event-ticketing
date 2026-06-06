@@ -19,7 +19,7 @@ export default function AdminCheckersPage() {
   const [removingId, setRemovingId] = React.useState<string | null>(null);
   const [error, setError] = React.useState("");
   const [message, setMessage] = React.useState("");
-  const [fetchTick, setFetchTick] = React.useState(0); // ← refresh trigger
+  const [fetchTick, setFetchTick] = React.useState(0);
 
   const canAccess = status !== "loading" && user?.role === "ADMIN";
 
@@ -29,7 +29,7 @@ export default function AdminCheckersPage() {
     let cancelled = false;
 
     async function run() {
-      if (!cancelled) setLoading(true); // ← moved inside run()
+      if (!cancelled) setLoading(true);
       try {
         const response = await getAdminUsers({ page: 1, limit: 100, role: "CHECKER" });
         if (!cancelled) setCheckers(response.data?.users ?? []);
@@ -44,8 +44,7 @@ export default function AdminCheckersPage() {
     return () => { cancelled = true; };
   }, [canAccess, status, fetchTick]);
 
-
-  const refresh = () => setFetchTick((t) => t + 1); // ← replaces loadCheckers()
+  const refresh = () => setFetchTick((t) => t + 1);
 
   const handleRemove = async (checkerId: string) => {
     if (!window.confirm("Delete this checker account?")) return;
@@ -57,7 +56,7 @@ export default function AdminCheckersPage() {
     try {
       await deleteCheckerAccount(checkerId);
       setMessage("Checker account deleted.");
-      refresh(); // ← triggers the effect
+      refresh();
     } catch (err) {
       setError(getApiErrorMessage(err, "Unable to delete checker account."));
     } finally {
@@ -75,8 +74,6 @@ export default function AdminCheckersPage() {
     0
   );
 
-  // Show a neutral skeleton while auth is unresolved — server and client
-  // must render the same tree on first pass to avoid hydration mismatches.
   if (status === "loading") {
     return (
       <div className="mx-auto max-w-6xl px-6 py-8">
@@ -85,7 +82,6 @@ export default function AdminCheckersPage() {
     );
   }
 
-  // Auth is now resolved on both server and client — safe to branch.
   if (!canAccess) {
     return (
       <div className="mx-auto max-w-4xl px-6 py-8">
@@ -159,7 +155,7 @@ export default function AdminCheckersPage() {
         </Card>
       </div>
 
-      {/* Checker directory table */}
+      {/* Checker directory */}
       <div className="mt-6 grid gap-6">
         <div className="space-y-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -196,93 +192,129 @@ export default function AdminCheckersPage() {
               </p>
             </Card>
           ) : (
-            <Card className="overflow-hidden p-0">
-              <div className="w-full overflow-x-auto rounded-2xl">
-                <table className="min-w-[900px] w-full">
-                  <thead>
-                    <tr className="border-b border-[var(--color-border)] bg-[var(--color-surface)]">
-                      <th className="px-4 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-muted)] sm:px-6">
-                        Checker
-                      </th>
+            <>
+              {/* ── Mobile card list (hidden on sm+) ── */}
+              <div className="flex flex-col gap-3 sm:hidden">
+                {checkers.map((checker) => (
+                  <Card key={checker.id} className="space-y-3 p-4">
+                    {/* Name + avatar row */}
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent)] text-sm font-bold text-white">
+                        {checker.name.charAt(0).toUpperCase()}
+                      </div>
 
-                      <th className="px-4 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-muted)] sm:px-6">
-                        Role
-                      </th>
+                      <div className="min-w-0">
+                        <p className="truncate font-medium text-[var(--color-ink)]">
+                          {checker.name}
+                        </p>
+                        <p className="truncate text-sm text-[var(--color-ink-muted)]">
+                          {checker.email}
+                        </p>
+                      </div>
 
-                      <th className="px-4 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-muted)] sm:px-6">
-                        Tickets
-                      </th>
+                      <Pill className="ml-auto shrink-0">{checker.role}</Pill>
+                    </div>
 
-                      <th className="px-4 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-muted)] sm:px-6">
-                        Events
-                      </th>
-
-                      <th className="px-4 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-muted)] sm:px-6">
-                        Created
-                      </th>
-
-                      <th className="px-4 py-4 text-right text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-muted)] sm:px-6">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {checkers.map((checker) => (
-                      <tr
-                        key={checker.id}
-                        className="border-b border-[var(--color-border)] transition hover:bg-[var(--color-surface)]"
-                      >
-                        <td className="px-4 py-4 sm:px-6">
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--color-accent)] text-sm font-bold text-white sm:h-10 sm:w-10">
-                              {checker.name.charAt(0).toUpperCase()}
-                            </div>
-
-                            <div>
-                              <p className="font-medium text-[var(--color-ink)]">
-                                {checker.name}
-                              </p>
-
-                              <p className="text-sm text-[var(--color-ink-muted)]">
-                                {checker.email}
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-
-                        <td className="px-4 py-4 sm:px-6">
-                          <Pill>{checker.role}</Pill>
-                        </td>
-
-                        <td className="px-4 py-4 font-medium text-[var(--color-ink)] sm:px-6">
-                          {checker.ticketCount}
-                        </td>
-
-                        <td className="px-4 py-4 font-medium text-[var(--color-ink)] sm:px-6">
-                          {checker.organizedEventCount}
-                        </td>
-
-                        <td className="px-4 py-4 text-sm text-[var(--color-ink-muted)] sm:px-6">
+                    {/* Stats row */}
+                    <div className="flex gap-4 text-sm">
+                      <div>
+                        <p className="text-[var(--color-ink-muted)]">Created</p>
+                        <p className="font-medium text-[var(--color-ink)]">
                           {formatDate(checker.createdAt)}
-                        </td>
+                        </p>
+                      </div>
+                    </div>
 
-                        <td className="px-4 py-4 text-right sm:px-6">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => void handleRemove(checker.id)}
-                            disabled={removingId === checker.id}
-                          >
-                            {removingId === checker.id ? "Removing..." : "Delete"}
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    {/* Action */}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => void handleRemove(checker.id)}
+                      disabled={removingId === checker.id}
+                      className="w-full"
+                    >
+                      {removingId === checker.id ? "Removing..." : "Delete"}
+                    </Button>
+                  </Card>
+                ))}
               </div>
-            </Card>
+
+              {/* ── Desktop table (hidden below sm) ── */}
+              <Card className="hidden overflow-hidden p-0 sm:block">
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[700px]">
+                    <thead>
+                      <tr className="border-b border-[var(--color-border)] bg-[var(--color-surface)]">
+                        <th className="px-4 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-muted)] sm:px-6">
+                          Checker
+                        </th>
+
+                        <th className="px-4 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-muted)] sm:px-6">
+                          Role
+                        </th>
+
+
+                        <th className="px-4 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-muted)] sm:px-6">
+                          Created
+                        </th>
+
+                        <th className="px-4 py-4 text-right text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-muted)] sm:px-6">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {checkers.map((checker) => (
+                        <tr
+                          key={checker.id}
+                          className="border-b border-[var(--color-border)] transition hover:bg-[var(--color-surface)]"
+                        >
+                          <td className="px-4 py-4 sm:px-6">
+                            <div className="flex items-center gap-3">
+                              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--color-accent)] text-sm font-bold text-white sm:h-10 sm:w-10">
+                                {checker.name.charAt(0).toUpperCase()}
+                              </div>
+
+                              <div>
+                                <p className="font-medium text-[var(--color-ink)]">
+                                  {checker.name}
+                                </p>
+
+                                <p className="text-sm text-[var(--color-ink-muted)]">
+                                  {checker.email}
+                                </p>
+                              </div>
+                            </div>
+                          </td>
+
+                          <td className="px-4 py-4 sm:px-6">
+                            <Pill>{checker.role}</Pill>
+                          </td>
+
+
+
+                          <td className="px-4 py-4 text-sm text-[var(--color-ink-muted)] sm:px-6">
+                            {formatDate(checker.createdAt)}
+                          </td>
+
+                          <td className="px-4 py-4 text-right sm:px-6">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => void handleRemove(checker.id)}
+                              disabled={removingId === checker.id}
+                            >
+                              {removingId === checker.id ? "Removing..." : "Delete"}
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Card>
+            </>
           )}
         </div>
       </div>
